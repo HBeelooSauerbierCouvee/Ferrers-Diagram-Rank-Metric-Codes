@@ -169,6 +169,7 @@ function setOrderMode(orderMode) {
   const label = orderMode === "descending" ? "Descending" : "Ascending";
   document.getElementById("diagram-order-toggle").checked = orderMode === "descending";
   document.getElementById("order-mode-badge").textContent = label;
+  document.getElementById("order-mode-status").textContent = `Diagram order set to ${label}`;
 }
 
 function renderDiagram(columns, orderMode) {
