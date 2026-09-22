@@ -180,7 +180,7 @@ function announceOrderMode(orderMode) {
   orderModeAnnouncementTimer = window.setTimeout(() => {
     statusEl.textContent = `Diagram order set to ${label}`;
     orderModeAnnouncementTimer = null;
-  }, 0);
+  }, 30);
 }
 
 function renderDiagram(columns, orderMode) {
