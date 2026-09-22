@@ -165,10 +165,14 @@ function columnsForMode(columns, orderMode) {
   return orderMode === "descending" ? columns.slice().reverse() : columns;
 }
 
-function setOrderMode(orderMode) {
+function syncOrderModeUi(orderMode) {
   const label = orderMode === "descending" ? "Descending" : "Ascending";
   document.getElementById("diagram-order-toggle").checked = orderMode === "descending";
   document.getElementById("order-mode-badge").textContent = label;
+}
+
+function announceOrderMode(orderMode) {
+  const label = orderMode === "descending" ? "Descending" : "Ascending";
   document.getElementById("order-mode-status").textContent = `Diagram order set to ${label}`;
 }
 
@@ -243,7 +247,7 @@ function renderResult(columns, d, q, bounds, orderMode) {
     refsEl.appendChild(li);
   }
 
-  setOrderMode(orderMode);
+  syncOrderModeUi(orderMode);
   renderDiagram(columns, orderMode);
   document.getElementById("results").hidden = false;
 }
@@ -270,7 +274,7 @@ function main() {
   let currentOrderMode = "ascending";
   let currentResult = null;
 
-  setOrderMode(currentOrderMode);
+  syncOrderModeUi(currentOrderMode);
 
   orderToggle.addEventListener("change", () => {
     currentOrderMode = orderToggle.checked ? "descending" : "ascending";
@@ -283,8 +287,9 @@ function main() {
         currentOrderMode
       );
     } else {
-      setOrderMode(currentOrderMode);
+      syncOrderModeUi(currentOrderMode);
     }
+    announceOrderMode(currentOrderMode);
   });
 
   form.addEventListener("submit", (event) => {
