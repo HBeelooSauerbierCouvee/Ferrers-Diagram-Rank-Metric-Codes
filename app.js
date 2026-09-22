@@ -7,7 +7,7 @@ const REFERENCE_LIBRARY = {
     id: "singleton_like",
     label:
       "Etzion, T.; Silberstein, N. (2009). Error-Correcting Codes in Projective Spaces via Rank-Metric Codes and Ferrers Diagrams.",
-    url: "https://doi.org/10.1109/TIT.2009.2021376",
+    url: "https://doi.org/10.1109/TIT.2009.2021376", 
   },
   trivial_code: {
     id: "trivial_code",
