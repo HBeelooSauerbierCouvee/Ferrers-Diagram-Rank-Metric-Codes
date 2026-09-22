@@ -36,6 +36,12 @@ const STORED_BOUNDS = {
   },
 };
 
+const viewState = {
+  columns: null,
+  d: null,
+  q: null,
+};
+
 function parseColumns(raw) {
   const parts = raw
     .split(/[\s,]+/)
@@ -166,10 +172,14 @@ function columnsForMode(columns, orderMode) {
   return orderMode === "descending" ? columns.slice().reverse() : columns;
 }
 
+function currentOrderMode() {
+  const toggle = document.getElementById("diagram-order-toggle");
+  return toggle && toggle.checked ? "descending" : "ascending";
+}
+
 function syncOrderModeUi(orderMode) {
-  const label = orderMode === "descending" ? "Descending" : "Ascending";
-  document.getElementById("diagram-order-toggle").checked = orderMode === "descending";
-  document.getElementById("order-mode-badge").textContent = label;
+  document.getElementById("order-mode-badge").textContent =
+    orderMode === "descending" ? "Descending" : "Ascending";
 }
 
 function announceOrderMode(orderMode) {
@@ -183,13 +193,12 @@ function announceOrderMode(orderMode) {
   }, 30);
 }
 
-function renderDiagram(columns, orderMode) {
+function renderDiagram(columns) {
   const diagramEl = document.getElementById("diagram");
   diagramEl.innerHTML = "";
 
-  const orderedColumns = columnsForMode(columns, orderMode);
-  const rows = Math.max(...orderedColumns);
-  const cols = orderedColumns.length;
+  const rows = Math.max(...columns);
+  const cols = columns.length;
   const textRows = [];
 
   for (let r = rows; r >= 1; r -= 1) {
@@ -199,7 +208,7 @@ function renderDiagram(columns, orderMode) {
     for (let c = 0; c < cols; c += 1) {
       const cellEl = document.createElement("div");
       cellEl.className = "cell";
-      if (orderedColumns[c] >= r) {
+      if (columns[c] >= r) {
         cellEl.classList.add("filled");
       }
       rowEl.appendChild(cellEl);
@@ -207,18 +216,33 @@ function renderDiagram(columns, orderMode) {
 
     diagramEl.appendChild(rowEl);
     textRows.push(
-      Array.from({ length: cols }, (_, c) => (orderedColumns[c] >= r ? "█" : "·")).join(
-        " "
-      )
+      Array.from({ length: cols }, (_, c) => (columns[c] >= r ? "█" : "·")).join(" ")
     );
   }
 
   document.getElementById("diagram-text").textContent = textRows.join("\n");
 }
 
-function renderResult(columns, d, q, bounds, orderMode) {
+function rerenderDiagramSection(options = {}) {
+  if (!viewState.columns) return;
+
+  const orderMode = currentOrderMode();
+  const columns = columnsForMode(viewState.columns, orderMode);
+
   document.getElementById("summary").textContent =
-    `F columns = [${columns.join(", ")}], d = ${d}, q = ${q}.`;
+    `F columns = [${columns.join(", ")}], d = ${viewState.d}, q = ${viewState.q}.`;
+  syncOrderModeUi(orderMode);
+  renderDiagram(columns);
+
+  if (options.announce) {
+    announceOrderMode(orderMode);
+  }
+}
+
+function renderResult(columns, d, q, bounds) {
+  viewState.columns = columns.slice();
+  viewState.d = d;
+  viewState.q = q;
 
   const boundsEl = document.getElementById("bounds");
   boundsEl.innerHTML = "";
@@ -254,8 +278,7 @@ function renderResult(columns, d, q, bounds, orderMode) {
     refsEl.appendChild(li);
   }
 
-  syncOrderModeUi(orderMode);
-  renderDiagram(columns, orderMode);
+  rerenderDiagramSection();
   document.getElementById("results").hidden = false;
 }
 
@@ -277,26 +300,9 @@ function main() {
   ).textContent = `Configured limits: order N ≤ ${MAX_ORDER}, field size q ≤ ${MAX_FIELD_SIZE}.`;
 
   const form = document.getElementById("query-form");
-  const orderToggle = document.getElementById("diagram-order-toggle");
-  let currentOrderMode = "ascending";
-  let currentResult = null;
-
-  syncOrderModeUi(currentOrderMode);
-
-  orderToggle.addEventListener("change", () => {
-    currentOrderMode = orderToggle.checked ? "descending" : "ascending";
-    if (currentResult) {
-      renderResult(
-        currentResult.columns,
-        currentResult.d,
-        currentResult.q,
-        currentResult.bounds,
-        currentOrderMode
-      );
-    } else {
-      syncOrderModeUi(currentOrderMode);
-    }
-    announceOrderMode(currentOrderMode);
+  syncOrderModeUi(currentOrderMode());
+  document.getElementById("diagram-order-toggle").addEventListener("change", () => {
+    rerenderDiagramSection({ announce: true });
   });
 
   form.addEventListener("submit", (event) => {
@@ -340,8 +346,7 @@ function main() {
     }
 
     const bounds = bestKnownBounds(columns, d, q);
-    currentResult = { columns, d, q, bounds };
-    renderResult(columns, d, q, bounds, currentOrderMode);
+    renderResult(columns, d, q, bounds);
   });
 }
 
