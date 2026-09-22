@@ -51,8 +51,13 @@ button:hover {
 
 .row {
   display: grid;
-  grid-template-columns: repeat(2, minmax(120px, 250px));
+  grid-template-columns: repeat(3, minmax(120px, 250px));
   gap: 0.75rem;
+}
+
+.input-help {
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem;
 }
 
 .muted {

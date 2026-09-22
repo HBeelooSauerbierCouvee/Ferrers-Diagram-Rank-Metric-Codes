@@ -28,6 +28,13 @@
             <label for="field">Field size q</label>
             <input id="field" name="field" type="number" min="2" required />
           </div>
+          <div>
+            <label for="characteristic">Field characteristic p (optional)</label>
+            <input id="characteristic" name="characteristic" type="number" min="2" />
+            <p class="input-help muted">
+              Needed only for p-monotone family checks when q is not prime.
+            </p>
+          </div>
         </div>
 
         <button type="submit">Show bounds</button>
@@ -58,6 +65,9 @@
           <div>
             <h3>Bounds on k</h3>
             <ul id="bounds"></ul>
+
+            <h3>Construction details</h3>
+            <ul id="construction-details"></ul>
 
             <h3>References</h3>
             <ul id="references"></ul>
