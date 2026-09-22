@@ -30,7 +30,8 @@ function parseColumns(value) {
 
 function singletonBound(columns, distance) {
   return Math.min(...Array.from({ length: distance }, (_, removedRows) => {
-    const retainedColumns = columns.slice(0, columns.length - (distance - 1 - removedRows));
+    const retainedCount = Math.max(0, columns.length - (distance - 1 - removedRows));
+    const retainedColumns = columns.slice(0, retainedCount);
     return retainedColumns.reduce((total, height) => total + Math.max(0, height - removedRows), 0);
   }));
 }
