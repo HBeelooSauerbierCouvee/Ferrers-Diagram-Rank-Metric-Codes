@@ -1,0 +1,115 @@
+:root {
+  color-scheme: light;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.25rem;
+}
+
+form {
+  display: grid;
+  gap: 0.75rem;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+input,
+button {
+  font: inherit;
+  padding: 0.5rem;
+}
+
+button {
+  width: fit-content;
+  background: #2563eb;
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 250px));
+  gap: 0.75rem;
+}
+
+.muted {
+  color: #475569;
+}
+
+.error {
+  color: #b91c1c;
+  min-height: 1.25rem;
+}
+
+.results {
+  margin-top: 1.25rem;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.diagram-and-bounds {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.diagram {
+  display: grid;
+  gap: 0.2rem;
+  justify-content: start;
+}
+
+.diagram-row {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.cell {
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid #334155;
+}
+
+.cell.filled {
+  background: #0ea5e9;
+}
+
+.diagram-text {
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  overflow-x: auto;
+}
+
+@media (max-width: 720px) {
+  .row,
+  .diagram-and-bounds {
+    grid-template-columns: 1fr;
+  }
+}
