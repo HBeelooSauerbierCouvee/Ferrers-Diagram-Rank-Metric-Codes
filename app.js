@@ -164,10 +164,6 @@ function bestKnownBounds(columns, d, q) {
 function renderDiagram(columns) {
   const diagramEl = document.getElementById("diagram");
   diagramEl.innerHTML = "";
-  diagramEl.setAttribute(
-    "aria-label",
-    `Ferrers diagram with column lengths [${columns.join(", ")}].`
-  );
 
   const rows = Math.max(...columns);
   const cols = columns.length;
@@ -274,7 +270,7 @@ function main() {
       return;
     }
 
-    if (!q) {
+    if (!q || q < 2) {
       setError("Field size q must be an integer at least 2.");
       return;
     }
