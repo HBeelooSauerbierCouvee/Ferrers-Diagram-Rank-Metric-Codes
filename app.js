@@ -171,6 +171,7 @@ function renderDiagram(columns) {
 
   const rows = Math.max(...columns);
   const cols = columns.length;
+  const textRows = [];
 
   for (let r = rows; r >= 1; r -= 1) {
     const rowEl = document.createElement("div");
@@ -186,7 +187,12 @@ function renderDiagram(columns) {
     }
 
     diagramEl.appendChild(rowEl);
+    textRows.push(
+      Array.from({ length: cols }, (_, c) => (columns[c] >= r ? "█" : "·")).join(" ")
+    );
   }
+
+  document.getElementById("diagram-text").textContent = textRows.join("\n");
 }
 
 function renderResult(columns, d, q, bounds) {
@@ -276,11 +282,6 @@ function main() {
     const order = ferrersOrder(columns);
     if (order > MAX_ORDER) {
       setError(`Ferrers diagram order ${order} exceeds N = ${MAX_ORDER}.`);
-      return;
-    }
-
-    if (d > MAX_ORDER) {
-      setError(`Minimum distance d must satisfy d ≤ N = ${MAX_ORDER}.`);
       return;
     }
 
