@@ -164,6 +164,10 @@ function bestKnownBounds(columns, d, q) {
 function renderDiagram(columns) {
   const diagramEl = document.getElementById("diagram");
   diagramEl.innerHTML = "";
+  diagramEl.setAttribute(
+    "aria-label",
+    `Ferrers diagram with column lengths [${columns.join(", ")}].`
+  );
 
   const rows = Math.max(...columns);
   const cols = columns.length;
@@ -201,7 +205,9 @@ function renderResult(columns, d, q, bounds) {
   boundsEl.appendChild(upperItem);
   boundsEl.appendChild(lowerItem);
 
-  const refs = [bounds.upperRef, bounds.lowerRef].map((id) => REFERENCE_LIBRARY[id]);
+  const refs = [bounds.upperRef, bounds.lowerRef]
+    .map((id) => REFERENCE_LIBRARY[id])
+    .filter(Boolean);
   const uniqueRefs = refs.filter((ref, index) => refs.indexOf(ref) === index);
 
   const refsEl = document.getElementById("references");
