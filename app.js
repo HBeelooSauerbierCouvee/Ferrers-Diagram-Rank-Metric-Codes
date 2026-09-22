@@ -7,7 +7,7 @@ const REFERENCE_LIBRARY = {
     id: "singleton_like",
     label:
       "Etzion, T.; Silberstein, N. (2009). Error-Correcting Codes in Projective Spaces via Rank-Metric Codes and Ferrers Diagrams.",
-    url: "https://doi.org/10.1109/TIT.2009.2021376", 
+    url: "https://doi.org/10.1109/TIT.2009.2021379",
   },
   trivial_code: {
     id: "trivial_code",
@@ -178,15 +178,13 @@ function currentOrderMode() {
 }
 
 function syncOrderModeUi(orderMode) {
-  const badgeEl = document.getElementById("order-mode-badge");
-  if (!badgeEl) return;
-  badgeEl.textContent = orderMode === "descending" ? "Descending" : "Ascending";
+  document.getElementById("order-mode-badge").textContent =
+    orderMode === "descending" ? "Descending" : "Ascending";
 }
 
 function announceOrderMode(orderMode) {
   const label = orderMode === "descending" ? "Descending" : "Ascending";
   const statusEl = document.getElementById("order-mode-status");
-  if (!statusEl) return;
   window.clearTimeout(orderModeAnnouncementTimer);
   statusEl.textContent = "";
   orderModeAnnouncementTimer = window.setTimeout(() => {
@@ -301,14 +299,15 @@ function main() {
     "limits"
   ).textContent = `Configured limits: order N ≤ ${MAX_ORDER}, field size q ≤ ${MAX_FIELD_SIZE}.`;
 
+  document.getElementById(
+    "name_last_update"
+  ).textContent = `This page is maintained by Hugo Beeloo-Sauerbier Couvee (hugo.sauerbier-couvee@tum.de). Last update: 01.01.1970`;
+
   const form = document.getElementById("query-form");
   syncOrderModeUi(currentOrderMode());
-  const orderToggle = document.getElementById("diagram-order-toggle");
-  if (orderToggle) {
-    orderToggle.addEventListener("change", () => {
-      rerenderDiagramSection({ announce: true });
-    });
-  }
+  document.getElementById("diagram-order-toggle").addEventListener("change", () => {
+    rerenderDiagramSection({ announce: true });
+  });
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
