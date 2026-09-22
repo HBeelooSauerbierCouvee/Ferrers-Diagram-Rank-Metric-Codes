@@ -168,9 +168,7 @@ function columnsForMode(columns, orderMode) {
 function setOrderMode(orderMode) {
   const label = orderMode === "descending" ? "Descending" : "Ascending";
   document.getElementById("diagram-order-toggle").checked = orderMode === "descending";
-  const badgeEl = document.getElementById("order-mode-badge");
-  badgeEl.textContent = label;
-  badgeEl.setAttribute("aria-label", `Current diagram order: ${label}`);
+  document.getElementById("order-mode-badge").textContent = label;
 }
 
 function renderDiagram(columns, orderMode) {
