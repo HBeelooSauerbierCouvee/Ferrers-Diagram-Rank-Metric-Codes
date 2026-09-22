@@ -178,13 +178,15 @@ function currentOrderMode() {
 }
 
 function syncOrderModeUi(orderMode) {
-  document.getElementById("order-mode-badge").textContent =
-    orderMode === "descending" ? "Descending" : "Ascending";
+  const badgeEl = document.getElementById("order-mode-badge");
+  if (!badgeEl) return;
+  badgeEl.textContent = orderMode === "descending" ? "Descending" : "Ascending";
 }
 
 function announceOrderMode(orderMode) {
   const label = orderMode === "descending" ? "Descending" : "Ascending";
   const statusEl = document.getElementById("order-mode-status");
+  if (!statusEl) return;
   window.clearTimeout(orderModeAnnouncementTimer);
   statusEl.textContent = "";
   orderModeAnnouncementTimer = window.setTimeout(() => {
@@ -301,9 +303,12 @@ function main() {
 
   const form = document.getElementById("query-form");
   syncOrderModeUi(currentOrderMode());
-  document.getElementById("diagram-order-toggle").addEventListener("change", () => {
-    rerenderDiagramSection({ announce: true });
-  });
+  const orderToggle = document.getElementById("diagram-order-toggle");
+  if (orderToggle) {
+    orderToggle.addEventListener("change", () => {
+      rerenderDiagramSection({ announce: true });
+    });
+  }
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
