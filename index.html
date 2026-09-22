@@ -42,7 +42,34 @@
 
         <div class="diagram-and-bounds">
           <div>
-            <h3>Ferrers diagram</h3>
+            <div class="diagram-header">
+              <h3>Ferrers diagram</h3>
+              <div class="diagram-order-controls">
+                <label class="switch-label" for="diagram-order-toggle">
+                  <span>Ascending</span>
+                  <span class="switch">
+                    <input
+                      id="diagram-order-toggle"
+                      type="checkbox"
+                      role="switch"
+                      aria-controls="diagram diagram-text"
+                      aria-describedby="order-mode-badge"
+                    />
+                    <span class="switch-slider" aria-hidden="true"></span>
+                  </span>
+                  <span>Descending</span>
+                </label>
+                <span
+                  id="order-mode-badge"
+                  class="order-mode-badge"
+                  role="status"
+                  aria-live="polite"
+                  aria-atomic="true"
+                >
+                  Ascending
+                </span>
+              </div>
+            </div>
             <div
               id="diagram"
               class="diagram"

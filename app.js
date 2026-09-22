@@ -161,12 +161,25 @@ function bestKnownBounds(columns, d, q) {
   return derivedBounds(columns, d);
 }
 
-function renderDiagram(columns) {
+function columnsForMode(columns, orderMode) {
+  return orderMode === "descending" ? columns.slice().reverse() : columns;
+}
+
+function setOrderMode(orderMode) {
+  const label = orderMode === "descending" ? "Descending" : "Ascending";
+  document.getElementById("diagram-order-toggle").checked = orderMode === "descending";
+  const badgeEl = document.getElementById("order-mode-badge");
+  badgeEl.textContent = label;
+  badgeEl.setAttribute("aria-label", `Current diagram order: ${label}`);
+}
+
+function renderDiagram(columns, orderMode) {
   const diagramEl = document.getElementById("diagram");
   diagramEl.innerHTML = "";
 
-  const rows = Math.max(...columns);
-  const cols = columns.length;
+  const orderedColumns = columnsForMode(columns, orderMode);
+  const rows = Math.max(...orderedColumns);
+  const cols = orderedColumns.length;
   const textRows = [];
 
   for (let r = rows; r >= 1; r -= 1) {
@@ -176,7 +189,7 @@ function renderDiagram(columns) {
     for (let c = 0; c < cols; c += 1) {
       const cellEl = document.createElement("div");
       cellEl.className = "cell";
-      if (columns[c] >= r) {
+      if (orderedColumns[c] >= r) {
         cellEl.classList.add("filled");
       }
       rowEl.appendChild(cellEl);
@@ -184,14 +197,16 @@ function renderDiagram(columns) {
 
     diagramEl.appendChild(rowEl);
     textRows.push(
-      Array.from({ length: cols }, (_, c) => (columns[c] >= r ? "█" : "·")).join(" ")
+      Array.from({ length: cols }, (_, c) => (orderedColumns[c] >= r ? "█" : "·")).join(
+        " "
+      )
     );
   }
 
   document.getElementById("diagram-text").textContent = textRows.join("\n");
 }
 
-function renderResult(columns, d, q, bounds) {
+function renderResult(columns, d, q, bounds, orderMode) {
   document.getElementById("summary").textContent =
     `F columns = [${columns.join(", ")}], d = ${d}, q = ${q}.`;
 
@@ -229,7 +244,8 @@ function renderResult(columns, d, q, bounds) {
     refsEl.appendChild(li);
   }
 
-  renderDiagram(columns);
+  setOrderMode(orderMode);
+  renderDiagram(columns, orderMode);
   document.getElementById("results").hidden = false;
 }
 
@@ -251,6 +267,27 @@ function main() {
   ).textContent = `Configured limits: order N ≤ ${MAX_ORDER}, field size q ≤ ${MAX_FIELD_SIZE}.`;
 
   const form = document.getElementById("query-form");
+  const orderToggle = document.getElementById("diagram-order-toggle");
+  let currentOrderMode = "ascending";
+  let currentResult = null;
+
+  setOrderMode(currentOrderMode);
+
+  orderToggle.addEventListener("change", () => {
+    currentOrderMode = orderToggle.checked ? "descending" : "ascending";
+    if (currentResult) {
+      renderResult(
+        currentResult.columns,
+        currentResult.d,
+        currentResult.q,
+        currentResult.bounds,
+        currentOrderMode
+      );
+    } else {
+      setOrderMode(currentOrderMode);
+    }
+  });
+
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     setError("");
@@ -292,7 +329,8 @@ function main() {
     }
 
     const bounds = bestKnownBounds(columns, d, q);
-    renderResult(columns, d, q, bounds);
+    currentResult = { columns, d, q, bounds };
+    renderResult(columns, d, q, bounds, currentOrderMode);
   });
 }
 

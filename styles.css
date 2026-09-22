@@ -78,6 +78,99 @@ button:hover {
   gap: 1rem;
 }
 
+.diagram-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.diagram-header h3 {
+  margin: 0;
+}
+
+.diagram-order-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.switch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0;
+  font-weight: 600;
+  color: #334155;
+}
+
+.switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: relative;
+  display: inline-block;
+  width: 2.5rem;
+  height: 1.4rem;
+  border-radius: 999px;
+  background: #cbd5e1;
+  border: 1px solid #94a3b8;
+  transition: background-color 0.2s ease;
+}
+
+.switch-slider::after {
+  content: "";
+  position: absolute;
+  top: 0.15rem;
+  left: 0.15rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.switch input:checked + .switch-slider {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.switch input:checked + .switch-slider::after {
+  transform: translateX(1.05rem);
+}
+
+.switch input:focus-visible + .switch-slider {
+  outline: 3px solid rgba(37, 99, 235, 0.25);
+  outline-offset: 2px;
+}
+
+.order-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #93c5fd;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
 .diagram {
   display: grid;
   gap: 0.2rem;
@@ -111,5 +204,10 @@ button:hover {
   .row,
   .diagram-and-bounds {
     grid-template-columns: 1fr;
+  }
+
+  .diagram-header,
+  .diagram-order-controls {
+    align-items: flex-start;
   }
 }
