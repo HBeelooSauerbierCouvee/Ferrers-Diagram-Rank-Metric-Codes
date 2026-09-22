@@ -109,19 +109,12 @@ function keyFor(columns, d, q) {
   return `${columns.join(",")}|${d}|${q}`;
 }
 
-function bestKnownBounds(columns, d, q) {
+function getStoredBounds(columns, d, q) {
   const key = keyFor(columns, d, q);
-  const stored = STORED_BOUNDS[key];
-  if (stored) {
-    return {
-      upper: stored.upper,
-      lower: stored.lower,
-      upperRef: stored.upperRef,
-      lowerRef: stored.lowerRef,
-      source: "stored",
-    };
-  }
+  return STORED_BOUNDS[key] || null;
+}
 
+function derivedBounds(columns, d) {
   const cells = ferrersCellCount(columns);
   const rMax = maxPossibleRank(columns);
 
@@ -152,6 +145,20 @@ function bestKnownBounds(columns, d, q) {
     lowerRef: "trivial_code",
     source: "derived",
   };
+}
+
+function bestKnownBounds(columns, d, q) {
+  const stored = getStoredBounds(columns, d, q);
+  if (stored) {
+    return {
+      upper: stored.upper,
+      lower: stored.lower,
+      upperRef: stored.upperRef,
+      lowerRef: stored.lowerRef,
+      source: "stored",
+    };
+  }
+  return derivedBounds(columns, d);
 }
 
 function renderDiagram(columns) {
@@ -220,6 +227,9 @@ function renderResult(columns, d, q, bounds) {
 
 function setError(message) {
   document.getElementById("error").textContent = message || "";
+  if (message) {
+    document.getElementById("results").hidden = true;
+  }
 }
 
 function parsePositiveInt(value) {
