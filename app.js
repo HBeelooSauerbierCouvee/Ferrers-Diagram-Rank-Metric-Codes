@@ -301,6 +301,10 @@ function main() {
     "limits"
   ).textContent = `Configured limits: order N ≤ ${MAX_ORDER}, field size q ≤ ${MAX_FIELD_SIZE}.`;
 
+  document.getElementById(
+    "name_last_update"
+  ).textContent = `This page is maintained by Hugo Beeloo-Sauerbier Couvee (hugo.sauerbier-couvee@tum.de). Last update: 01.01.1970`;
+
   const form = document.getElementById("query-form");
   syncOrderModeUi(currentOrderMode());
   const orderToggle = document.getElementById("diagram-order-toggle");
