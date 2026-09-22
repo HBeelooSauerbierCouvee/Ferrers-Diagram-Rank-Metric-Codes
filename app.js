@@ -35,6 +35,12 @@ const STORED_BOUNDS = {
   },
 };
 
+const viewState = {
+  columns: null,
+  d: null,
+  q: null,
+};
+
 function parseColumns(raw) {
   const parts = raw
     .split(/[\s,]+/)
@@ -191,9 +197,32 @@ function renderDiagram(columns) {
   document.getElementById("diagram-text").textContent = textRows.join("\n");
 }
 
-function renderResult(columns, d, q, bounds) {
+function displayedColumns(columns) {
+  const toggle = document.getElementById("diagram-order-toggle");
+  return toggle && toggle.checked ? columns.slice().reverse() : columns;
+}
+
+function updateOrderLabel() {
+  const toggle = document.getElementById("diagram-order-toggle");
+  document.getElementById("diagram-order-state").textContent =
+    toggle && toggle.checked
+      ? "Current order: descending"
+      : "Current order: ascending (default)";
+}
+
+function rerenderDiagramSection() {
+  if (!viewState.columns) return;
+  const columns = displayedColumns(viewState.columns);
   document.getElementById("summary").textContent =
-    `F columns = [${columns.join(", ")}], d = ${d}, q = ${q}.`;
+    `F columns = [${columns.join(", ")}], d = ${viewState.d}, q = ${viewState.q}.`;
+  renderDiagram(columns);
+  updateOrderLabel();
+}
+
+function renderResult(columns, d, q, bounds) {
+  viewState.columns = columns.slice();
+  viewState.d = d;
+  viewState.q = q;
 
   const boundsEl = document.getElementById("bounds");
   boundsEl.innerHTML = "";
@@ -229,7 +258,7 @@ function renderResult(columns, d, q, bounds) {
     refsEl.appendChild(li);
   }
 
-  renderDiagram(columns);
+  rerenderDiagramSection();
   document.getElementById("results").hidden = false;
 }
 
@@ -251,6 +280,9 @@ function main() {
   ).textContent = `Configured limits: order N ≤ ${MAX_ORDER}, field size q ≤ ${MAX_FIELD_SIZE}.`;
 
   const form = document.getElementById("query-form");
+  document
+    .getElementById("diagram-order-toggle")
+    .addEventListener("change", rerenderDiagramSection);
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     setError("");

@@ -43,6 +43,20 @@
         <div class="diagram-and-bounds">
           <div>
             <h3>Ferrers diagram</h3>
+            <div class="diagram-order-control">
+              <label for="diagram-order-toggle" class="toggle-label">
+                <input
+                  id="diagram-order-toggle"
+                  type="checkbox"
+                  role="switch"
+                  aria-describedby="diagram-order-state"
+                />
+                Show descending order
+              </label>
+              <p id="diagram-order-state" class="muted order-state">
+                Current order: ascending (default)
+              </p>
+            </div>
             <div
               id="diagram"
               class="diagram"
