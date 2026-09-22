@@ -201,7 +201,7 @@ function renderDiagram(columns) {
   const cols = columns.length;
   const textRows = [];
 
-  for (let r = rows; r >= 1; r -= 1) {
+  for (let r = 1; r <= rows; r += 1) {
     const rowEl = document.createElement("div");
     rowEl.className = "diagram-row";
 
