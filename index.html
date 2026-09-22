@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Certified dimension bounds for Ferrers diagram rank-metric codes." />
+    <title>Ferrers Rank-Metric Code Bounds</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <p class="eyebrow">Finite-field coding theory</p>
+      <h1>Ferrers rank-metric code bounds</h1>
+      <p>Search certified dimension bounds for diagrams with at most <strong>N = 10</strong> rows and columns, over fields of size at most <strong>Q = 13</strong>.</p>
+    </header>
+    <main>
+      <section class="panel" aria-labelledby="search-title">
+        <h2 id="search-title">Parameters</h2>
+        <form id="bounds-form">
+          <label for="columns">Column lengths</label>
+          <input id="columns" name="columns" value="1, 2, 3, 4" inputmode="numeric" aria-describedby="columns-help" required />
+          <p id="columns-help" class="help">Comma- or space-separated positive integers, in ascending or descending order.</p>
+          <div class="parameter-grid">
+            <label for="distance">Minimum rank distance
+              <input id="distance" name="distance" type="number" min="1" max="10" value="2" required />
+            </label>
+            <label for="field">Field size
+              <select id="field" name="field"></select>
+            </label>
+          </div>
+          <button type="submit">Find bounds</button>
+          <p id="form-error" class="error" role="alert" hidden></p>
+        </form>
+      </section>
+      <section id="result" class="result" aria-live="polite" hidden>
+        <div class="result-heading">
+          <div>
+            <p class="eyebrow">Catalog entry</p>
+            <h2 id="result-title"></h2>
+          </div>
+          <p id="summary" class="summary"></p>
+        </div>
+        <div class="diagram-and-bounds">
+          <figure>
+            <div id="diagram" class="diagram" aria-label="Ferrers diagram"></div>
+            <figcaption>Ferrers diagram <span id="diagram-columns"></span></figcaption>
+          </figure>
+          <div class="bounds">
+            <article class="bound upper">
+              <p class="bound-label">Best certified upper bound</p>
+              <p class="bound-value">k ≤ <strong id="upper-bound"></strong></p>
+              <p id="upper-detail"></p>
+            </article>
+            <article class="bound lower">
+              <p class="bound-label">Best catalogued lower bound</p>
+              <p class="bound-value">k ≥ <strong id="lower-bound"></strong></p>
+              <p id="lower-detail"></p>
+            </article>
+          </div>
+        </div>
+        <section class="references" aria-labelledby="references-title">
+          <h3 id="references-title">References</h3>
+          <ol id="references-list"></ol>
+        </section>
+      </section>
+    </main>
+    <footer>Bounds are dimension bounds over <span aria-label="finite field">𝔽<sub>q</sub></span>; this catalog records the constructions stated with each result.</footer>
+  </body>
+</html>

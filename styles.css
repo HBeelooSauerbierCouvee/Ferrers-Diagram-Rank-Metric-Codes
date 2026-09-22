@@ -1,0 +1,39 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  color: #172238;
+  background: #f5f7fb;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+.site-header, main, footer { max-width: 960px; margin: auto; }
+.site-header { padding: 4rem 1.5rem 2rem; }
+h1 { margin: .2rem 0 .75rem; font-size: clamp(2rem, 6vw, 3.5rem); letter-spacing: -.04em; }
+h2, h3, p { margin-top: 0; }
+.eyebrow, .bound-label { margin-bottom: .4rem; color: #52657f; font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+main { padding: 0 1.5rem 3rem; }
+.panel, .result { padding: 1.5rem; border: 1px solid #dce3ee; border-radius: 1rem; background: #fff; box-shadow: 0 8px 28px #24334d0d; }
+label { display: block; font-weight: 650; }
+input, select, button { width: 100%; margin-top: .4rem; border-radius: .45rem; font: inherit; }
+input, select { padding: .65rem; border: 1px solid #aebdce; background: #fff; }
+.help { color: #52657f; font-size: .9rem; }
+.parameter-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1rem 0; }
+button { padding: .75rem 1rem; border: 0; background: #0057b8; color: #fff; cursor: pointer; font-weight: 700; }
+button:hover { background: #00428d; }
+.error { margin-top: 1rem; color: #a61b1b; }
+.result { margin-top: 1.5rem; }
+.result-heading, .diagram-and-bounds { display: flex; justify-content: space-between; gap: 2rem; }
+.summary { font-size: 1.3rem; font-weight: 700; }
+.diagram-and-bounds { align-items: center; margin: 1.5rem 0; }
+figure { min-width: 180px; margin: 0; text-align: center; }
+.diagram { display: grid; grid-template-columns: repeat(var(--columns), 22px); gap: 2px; justify-content: center; padding: 1rem; }
+.cell { width: 22px; height: 22px; border-radius: 2px; background: #1b6ec2; }
+.cell.empty { visibility: hidden; }
+.bounds { display: grid; flex: 1; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.bound { padding: 1rem; border-radius: .75rem; }
+.upper { background: #edf5ff; }.lower { background: #edf9f0; }
+.bound-value { font-size: 1.5rem; }.references { border-top: 1px solid #dce3ee; padding-top: 1rem; }
+li { margin: .55rem 0; line-height: 1.5; }
+footer { padding: 0 1.5rem 2rem; color: #52657f; font-size: .9rem; }
+@media (max-width: 640px) { .result-heading, .diagram-and-bounds { display: block; } .bounds { margin-top: 1.5rem; grid-template-columns: 1fr; } .parameter-grid { grid-template-columns: 1fr; } }
