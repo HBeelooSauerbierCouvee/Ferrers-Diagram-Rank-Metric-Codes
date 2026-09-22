@@ -275,7 +275,7 @@ function main() {
     }
 
     if (!q) {
-      setError("Field size q must be a positive integer.");
+      setError("Field size q must be an integer at least 2.");
       return;
     }
 

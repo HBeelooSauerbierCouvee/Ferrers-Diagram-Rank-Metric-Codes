@@ -9,4 +9,4 @@ Open `/index.html` (or host with GitHub Pages), then provide:
 - minimum rank distance `d`,
 - field size `q`.
 
-The page validates limits `N` and `Q` (configured in `app.js`), renders the diagram, and reports upper/lower bounds with references.
+The page validates limits `N` and `q` (configured in `app.js`), renders the diagram, and reports upper/lower bounds with references.
