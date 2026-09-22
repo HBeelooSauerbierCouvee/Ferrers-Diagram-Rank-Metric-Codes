@@ -1,5 +1,6 @@
 const MAX_ORDER = 12;
 const MAX_FIELD_SIZE = 97;
+let orderModeAnnouncementTimer = null;
 
 const REFERENCE_LIBRARY = {
   singleton_like: {
@@ -173,7 +174,13 @@ function syncOrderModeUi(orderMode) {
 
 function announceOrderMode(orderMode) {
   const label = orderMode === "descending" ? "Descending" : "Ascending";
-  document.getElementById("order-mode-status").textContent = `Diagram order set to ${label}`;
+  const statusEl = document.getElementById("order-mode-status");
+  window.clearTimeout(orderModeAnnouncementTimer);
+  statusEl.textContent = "";
+  orderModeAnnouncementTimer = window.setTimeout(() => {
+    statusEl.textContent = `Diagram order set to ${label}`;
+    orderModeAnnouncementTimer = null;
+  }, 0);
 }
 
 function renderDiagram(columns, orderMode) {
