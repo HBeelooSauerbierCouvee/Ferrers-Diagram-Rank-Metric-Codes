@@ -78,6 +78,21 @@ button:hover {
   gap: 1rem;
 }
 
+.diagram-order-control {
+  margin-bottom: 0.75rem;
+}
+
+.toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+.order-state {
+  margin: 0.35rem 0 0;
+}
+
 .diagram {
   display: grid;
   gap: 0.2rem;
