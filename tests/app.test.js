@@ -28,6 +28,34 @@ test('strictly monotone example attains the upper bound', () => {
   assert.equal(bounds.construction.family, 'MDS-constructible');
 });
 
+test('evaluateUpperBounds chooses the smallest applicable result', () => {
+  const result = app.evaluateUpperBounds(
+    {},
+    [
+      { appliesTo: () => true, evaluate: () => ({ id: 'a', value: 5, ref: 'singleton_like' }) },
+      { appliesTo: () => false, evaluate: () => ({ id: 'b', value: 1, ref: 'singleton_like' }) },
+      { appliesTo: () => true, evaluate: () => ({ id: 'c', value: 2, ref: 'singleton_like' }) },
+    ]
+  );
+
+  assert.equal(result.id, 'c');
+  assert.equal(result.value, 2);
+});
+
+test('evaluateLowerBounds keeps the first best applicable result on ties', () => {
+  const result = app.evaluateLowerBounds(
+    {},
+    [
+      { appliesTo: () => true, evaluate: () => ({ id: 'first', value: 7, ref: 'neri_stanojkovski_2024' }) },
+      { appliesTo: () => true, evaluate: () => ({ id: 'second', value: 7, ref: 'full_space_d1' }) },
+      { appliesTo: () => true, evaluate: () => ({ id: 'third', value: 3, ref: 'trivial_code' }) },
+    ]
+  );
+
+  assert.equal(result.id, 'first');
+  assert.equal(result.value, 7);
+});
+
 test('stored exact d=1 case is preserved', () => {
   const characteristicInfo = app.characteristicInfoFor(2, '');
   const bounds = app.bestKnownBounds([1, 2, 3, 3], 1, 2, characteristicInfo);

@@ -66,10 +66,10 @@ const viewState = {
   characteristic: null,
 };
 
-export function evaluateUpperBounds(context) {
+export function evaluateUpperBounds(context, registry = upperBounds) {
   let best = null;
 
-  for (const bound of upperBounds) {
+  for (const bound of registry) {
     if (!bound.appliesTo(context)) {
       continue;
     }
@@ -83,10 +83,10 @@ export function evaluateUpperBounds(context) {
   return best;
 }
 
-export function evaluateLowerBounds(context) {
+export function evaluateLowerBounds(context, registry = lowerBounds) {
   let best = null;
 
-  for (const bound of lowerBounds) {
+  for (const bound of registry) {
     if (!bound.appliesTo(context)) {
       continue;
     }
