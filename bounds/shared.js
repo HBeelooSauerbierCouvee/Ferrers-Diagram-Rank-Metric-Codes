@@ -1,6 +1,10 @@
+// Define the supported order cap for user inputs.
 export const MAX_ORDER = 12;
+
+// Define the supported field-size cap for user inputs.
 export const MAX_FIELD_SIZE = 97;
 
+// Collect the citations used by computed and stored bounds.
 export const REFERENCE_LIBRARY = {
   singleton_like: {
     id: "singleton_like",
@@ -29,6 +33,7 @@ export const REFERENCE_LIBRARY = {
   },
 };
 
+// Store exact bound values that are already catalogued.
 export const STORED_BOUNDS = {
   "1,2,3,3|1|2": {
     upper: 9,
@@ -38,6 +43,7 @@ export const STORED_BOUNDS = {
   },
 };
 
+// Parse and normalize Ferrers column input from the form.
 export function parseColumns(raw) {
   const parts = raw
     .split(/[\s,]+/)
@@ -62,6 +68,7 @@ export function parseColumns(raw) {
   return { columns: nondecreasing ? cols : cols.slice().reverse() };
 }
 
+// Check whether an integer is prime.
 export function isPrime(n) {
   if (!Number.isInteger(n) || n < 2) return false;
   for (let i = 2; i * i <= n; i += 1) {
@@ -70,6 +77,7 @@ export function isPrime(n) {
   return true;
 }
 
+// Check whether a field size is a prime power.
 export function isPrimePower(q) {
   if (!Number.isInteger(q) || q < 2) return false;
   for (let p = 2; p * p <= q; p += 1) {
@@ -81,6 +89,7 @@ export function isPrimePower(q) {
   return true;
 }
 
+// Check whether q is a power of the supplied prime p.
 export function isPowerOfPrime(q, p) {
   if (!Number.isInteger(q) || q < 2 || !isPrime(p)) return false;
   let n = q;
@@ -90,16 +99,19 @@ export function isPowerOfPrime(q, p) {
   return n === 1;
 }
 
+// Count the total number of cells in a Ferrers diagram.
 export function ferrersCellCount(columns) {
   return columns.reduce((sum, c) => sum + c, 0);
 }
 
+// Compute the order n determined by the diagram dimensions.
 export function ferrersOrder(columns) {
   const rows = Math.max(...columns);
   const cols = columns.length;
   return Math.max(rows, cols);
 }
 
+// Left-pad the column sequence to an order-n tuple.
 export function expandToOrderTuple(columns) {
   const n = ferrersOrder(columns);
   return Array(n - columns.length)
@@ -107,14 +119,17 @@ export function expandToOrderTuple(columns) {
     .concat(columns);
 }
 
+// Test whether an order-n tuple satisfies the triangular condition.
 export function isOrderNTriangular(orderTuple) {
   return orderTuple.every((height, index) => height <= index + 1);
 }
 
+// Compute the largest rank that any supported matrix can attain.
 export function maxPossibleRank(columns) {
   return Math.min(Math.max(...columns), columns.length);
 }
 
+// Evaluate the Etzion-Silberstein upper bound for the diagram.
 export function etzionSilbersteinUpper(columns, d) {
   const n = columns.length;
   let best = Number.POSITIVE_INFINITY;
@@ -136,6 +151,7 @@ export function etzionSilbersteinUpper(columns, d) {
   return Math.max(0, Number.isFinite(best) ? best : 0);
 }
 
+// Count occupied cells on each diagonal of the order-n diagram.
 export function diagonalCellCounts(columns) {
   const orderTuple = expandToOrderTuple(columns);
   const n = orderTuple.length;
@@ -154,6 +170,7 @@ export function diagonalCellCounts(columns) {
   return counts;
 }
 
+// Compute the diagonal lower-bound quantity ν_min(D,d).
 export function nuMin(columns, d) {
   return diagonalCellCounts(columns).reduce(
     (sum, count) => sum + Math.max(0, count - d + 1),
@@ -161,6 +178,7 @@ export function nuMin(columns, d) {
   );
 }
 
+// Check whether the order-n tuple is monotone in the theorem sense.
 export function isMonotone(orderTuple) {
   const n = orderTuple.length;
   for (let i = 0; i < n - 1; i += 1) {
@@ -171,6 +189,7 @@ export function isMonotone(orderTuple) {
   return true;
 }
 
+// Check whether the order-n tuple is strictly monotone.
 export function isStrictlyMonotone(orderTuple) {
   for (let i = 0; i < orderTuple.length - 1; i += 1) {
     if (orderTuple[i] > 0 && orderTuple[i + 1] <= orderTuple[i]) {
@@ -180,6 +199,7 @@ export function isStrictlyMonotone(orderTuple) {
   return true;
 }
 
+// Check whether the tuple stays constant on fixed-size blocks.
 export function isConstantOnBlocks(orderTuple, blockSize) {
   for (let start = 0; start < orderTuple.length; start += blockSize) {
     const value = orderTuple[start];
@@ -192,6 +212,7 @@ export function isConstantOnBlocks(orderTuple, blockSize) {
   return true;
 }
 
+// Compute the p-height and contracted tuple for p-monotone tests.
 export function pHeightAndContraction(orderTuple, p) {
   let height = 0;
   let blockSize = 1;
@@ -223,11 +244,13 @@ export function pHeightAndContraction(orderTuple, p) {
   };
 }
 
+// Parse a required positive integer.
 export function parsePositiveInt(value) {
   const n = Number(value);
   return Number.isInteger(n) && n > 0 ? n : null;
 }
 
+// Parse an optional positive integer field.
 export function parseOptionalPositiveInt(value) {
   if (value === "" || value === null || value === undefined) {
     return null;
@@ -235,6 +258,7 @@ export function parseOptionalPositiveInt(value) {
   return parsePositiveInt(value);
 }
 
+// Resolve and validate the characteristic associated with q.
 export function characteristicInfoFor(q, rawCharacteristic) {
   const characteristic = parseOptionalPositiveInt(rawCharacteristic);
 
@@ -259,15 +283,18 @@ export function characteristicInfoFor(q, rawCharacteristic) {
   return { characteristic: null, source: "unknown" };
 }
 
+// Build the lookup key used by the stored-bounds table.
 export function keyFor(columns, d, q) {
   return `${columns.join(",")}|${d}|${q}`;
 }
 
+// Retrieve an exact stored bound when one is available.
 export function getStoredBounds(columns, d, q) {
   const key = keyFor(columns, d, q);
   return STORED_BOUNDS[key] || null;
 }
 
+// Describe how the characteristic value was determined.
 export function describeCharacteristic(characteristicInfo) {
   if (!characteristicInfo.characteristic) {
     return "Characteristic not supplied; p-monotone detection is limited to prime q.";
@@ -278,6 +305,7 @@ export function describeCharacteristic(characteristicInfo) {
   return `Characteristic p = ${characteristicInfo.characteristic} supplied explicitly.`;
 }
 
+// Assemble the shared context object used by bound evaluators.
 export function createEvaluationContext(columns, d, q, characteristicInfo) {
   const orderTuple = expandToOrderTuple(columns);
   const triangular = isOrderNTriangular(orderTuple);
@@ -296,6 +324,7 @@ export function createEvaluationContext(columns, d, q, characteristicInfo) {
   };
 }
 
+// Build the explanation lines shown for a lower-bound construction.
 export function buildConstructionDetails(context, { familyMessages = [], attained = false } = {}) {
   const details = [];
 

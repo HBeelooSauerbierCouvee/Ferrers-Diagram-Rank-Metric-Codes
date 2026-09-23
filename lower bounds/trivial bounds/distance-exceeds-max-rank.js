@@ -1,9 +1,11 @@
 import { buildConstructionDetails } from "../../bounds/shared.js";
 
+// Detect when the requested distance exceeds every possible rank.
 export function exceedsMaximumRank(context) {
   return context.d > context.rMax;
 }
 
+// Build the zero-code lower bound for impossible distances.
 export function evaluateMaximumRankLowerBound(context) {
   return {
     id: "max_rank_limit",
@@ -23,10 +25,12 @@ export function evaluateMaximumRankLowerBound(context) {
   };
 }
 
+// Register the maximum-rank lower-bound rule.
 const maximumRankLowerBound = {
   id: "max_rank_limit",
   appliesTo: exceedsMaximumRank,
   evaluate: evaluateMaximumRankLowerBound,
 };
 
+// Export the default lower-bound registration.
 export default maximumRankLowerBound;

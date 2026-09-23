@@ -1,5 +1,6 @@
 import { buildConstructionDetails } from "../../bounds/shared.js";
 
+// Detect when the diagonal construction meets the best upper bound.
 export function isMdsConstructibleFamily(context) {
   return (
     context.triangular &&
@@ -9,6 +10,7 @@ export function isMdsConstructibleFamily(context) {
   );
 }
 
+// Build the attained lower bound for MDS-constructible diagrams.
 export function evaluateMdsConstructibleLowerBound(context) {
   return {
     id: "neri_2024_mds_constructible",
@@ -28,10 +30,12 @@ export function evaluateMdsConstructibleLowerBound(context) {
   };
 }
 
+// Register the MDS-constructible lower-bound rule.
 const mdsConstructibleLowerBound = {
   id: "neri_2024_mds_constructible",
   appliesTo: isMdsConstructibleFamily,
   evaluate: evaluateMdsConstructibleLowerBound,
 };
 
+// Export the default lower-bound registration.
 export default mdsConstructibleLowerBound;

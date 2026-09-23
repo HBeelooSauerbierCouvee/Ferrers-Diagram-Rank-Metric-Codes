@@ -1,9 +1,11 @@
 import { buildConstructionDetails } from "../../bounds/shared.js";
 
+// Provide a fallback rule that always permits the zero code.
 export function supportsTrivialCode() {
   return true;
 }
 
+// Build the conservative trivial lower bound.
 export function evaluateTrivialLowerBound(context) {
   return {
     id: "trivial_code",
@@ -21,10 +23,12 @@ export function evaluateTrivialLowerBound(context) {
   };
 }
 
+// Register the trivial lower-bound rule.
 const trivialLowerBound = {
   id: "trivial_code",
   appliesTo: supportsTrivialCode,
   evaluate: evaluateTrivialLowerBound,
 };
 
+// Export the default lower-bound registration.
 export default trivialLowerBound;

@@ -30,6 +30,7 @@ import {
 import { lowerBounds } from "./lower bounds/index.js";
 import { upperBounds } from "./upper bounds/index.js";
 
+// Re-export shared helpers for tests and other modules.
 export {
   MAX_FIELD_SIZE,
   MAX_ORDER,
@@ -57,8 +58,10 @@ export {
   parsePositiveInt,
 };
 
+// Track the pending order-mode announcement timeout.
 let orderModeAnnouncementTimer = null;
 
+// Store the latest rendered query so the diagram can be redrawn.
 const viewState = {
   columns: null,
   d: null,
@@ -66,6 +69,7 @@ const viewState = {
   characteristic: null,
 };
 
+// Select the smallest applicable upper bound from the registry.
 export function evaluateUpperBounds(context, registry = upperBounds) {
   let best = null;
 
@@ -83,6 +87,7 @@ export function evaluateUpperBounds(context, registry = upperBounds) {
   return best;
 }
 
+// Select the largest applicable lower bound from the registry.
 export function evaluateLowerBounds(context, registry = lowerBounds) {
   let best = null;
 
@@ -100,6 +105,7 @@ export function evaluateLowerBounds(context, registry = lowerBounds) {
   return best;
 }
 
+// Resolve the best available upper and lower bounds for one input.
 export function classifyConstruction(columns, d, q, characteristicInfo) {
   const baseContext = createEvaluationContext(columns, d, q, characteristicInfo);
   const bestUpper = evaluateUpperBounds(baseContext);
@@ -124,10 +130,12 @@ export function classifyConstruction(columns, d, q, characteristicInfo) {
   };
 }
 
+// Expose the derived-bound workflow as a named helper.
 export function derivedBounds(columns, d, q, characteristicInfo) {
   return classifyConstruction(columns, d, q, characteristicInfo);
 }
 
+// Prefer stored exact values before falling back to derived bounds.
 export function bestKnownBounds(columns, d, q, characteristicInfo) {
   const stored = getStoredBounds(columns, d, q);
   if (stored) {
@@ -153,25 +161,30 @@ export function bestKnownBounds(columns, d, q, characteristicInfo) {
   return derivedBounds(columns, d, q, characteristicInfo);
 }
 
+// Return the human-readable construction details for a bound result.
 export function describeConstruction(bounds) {
   return bounds.construction.details || [];
 }
 
+// Adapt normalized columns to the currently selected display order.
 function columnsForMode(columns, orderMode) {
   return orderMode === "descending" ? columns.slice().reverse() : columns;
 }
 
+// Read the active diagram-order toggle from the page.
 function currentOrderMode() {
   const toggle = document.getElementById("diagram-order-toggle");
   return toggle && toggle.checked ? "descending" : "ascending";
 }
 
+// Update the visible order-mode badge text.
 function syncOrderModeUi(orderMode) {
   const badgeEl = document.getElementById("order-mode-badge");
   if (!badgeEl) return;
   badgeEl.textContent = orderMode === "descending" ? "Descending" : "Ascending";
 }
 
+// Announce order-mode changes for assistive feedback.
 function announceOrderMode(orderMode) {
   const label = orderMode === "descending" ? "Descending" : "Ascending";
   const statusEl = document.getElementById("order-mode-status");
@@ -184,6 +197,7 @@ function announceOrderMode(orderMode) {
   }, 30);
 }
 
+// Render the Ferrers diagram as both grid cells and text rows.
 function renderDiagram(columns) {
   const diagramEl = document.getElementById("diagram");
   diagramEl.innerHTML = "";
@@ -214,6 +228,7 @@ function renderDiagram(columns) {
   document.getElementById("diagram-text").textContent = textRows.join("\n");
 }
 
+// Refresh the diagram section from the last computed result.
 function rerenderDiagramSection(options = {}) {
   if (!viewState.columns) return;
 
@@ -231,6 +246,7 @@ function rerenderDiagramSection(options = {}) {
   }
 }
 
+// Populate the result, construction, and reference panels.
 function renderResult(columns, d, q, characteristicInfo, bounds) {
   viewState.columns = columns.slice();
   viewState.d = d;
@@ -289,6 +305,7 @@ function renderResult(columns, d, q, characteristicInfo, bounds) {
   document.getElementById("results").hidden = false;
 }
 
+// Show or clear the current validation error message.
 function setError(message) {
   document.getElementById("error").textContent = message || "";
   if (message) {
@@ -296,6 +313,7 @@ function setError(message) {
   }
 }
 
+// Wire the page controls to the bounds calculator.
 function main() {
   document.getElementById(
     "limits"
@@ -365,6 +383,7 @@ function main() {
   });
 }
 
+// Start the UI only when running in a browser environment.
 if (typeof document !== "undefined") {
   main();
 }
