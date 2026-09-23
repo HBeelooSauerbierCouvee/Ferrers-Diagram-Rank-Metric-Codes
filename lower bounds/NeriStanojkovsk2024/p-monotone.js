@@ -3,7 +3,7 @@ import {
   isMonotone,
   isPowerOfPrime,
   pHeightAndContraction,
-} from "../../bounds/shared.js";
+} from "../shared.js";
 
 // Derive the contraction data needed for p-monotone checks.
 export function getPMonotoneData(context) {

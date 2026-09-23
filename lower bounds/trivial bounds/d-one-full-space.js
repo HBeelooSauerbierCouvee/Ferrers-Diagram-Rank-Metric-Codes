@@ -1,4 +1,4 @@
-import { buildConstructionDetails } from "../../bounds/shared.js";
+import { buildConstructionDetails } from "../shared.js";
 
 // Detect the exact full-space case with minimum distance one.
 export function isFullSpaceCase(context) {

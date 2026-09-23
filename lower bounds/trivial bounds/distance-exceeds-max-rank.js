@@ -1,4 +1,4 @@
-import { buildConstructionDetails } from "../../bounds/shared.js";
+import { buildConstructionDetails } from "../shared.js";
 
 // Detect when the requested distance exceeds every possible rank.
 export function exceedsMaximumRank(context) {

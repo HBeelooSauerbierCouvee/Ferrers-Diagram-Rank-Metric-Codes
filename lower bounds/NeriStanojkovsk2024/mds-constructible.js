@@ -1,4 +1,4 @@
-import { buildConstructionDetails } from "../../bounds/shared.js";
+import { buildConstructionDetails } from "../shared.js";
 
 // Detect when the diagonal construction meets the best upper bound.
 export function isMdsConstructibleFamily(context) {
