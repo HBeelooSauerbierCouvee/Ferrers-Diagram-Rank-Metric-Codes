@@ -1,5 +1,3 @@
-//import { buildConstructionDetails } from "../shared.js";
-
 // Provide a fallback rule that always permits the zero code.
 export function supportsTrivialCode() {
   return true;
@@ -15,10 +13,6 @@ export function evaluateTrivialLowerBound(context) {
       attained: false,
       label: null,
       family: null,
-      /* details: buildConstructionDetails(context, {
-        attained: false,
-        familyMessages: ["Family check: no supported family certificate detected."],
-      }), */
     },
   };
 }

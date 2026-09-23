@@ -1,5 +1,4 @@
 import {
- // buildConstructionDetails,
   isMonotone,
   isPowerOfPrime,
   pHeightAndContraction,
@@ -40,12 +39,6 @@ export function evaluatePMonotoneLowerBound(context) {
       label: "Explicit diagonal construction",
       family: "p-monotone",
       pMonotoneData: contractionData,
-      /* details: buildConstructionDetails(context, {
-        attained: true,
-        familyMessages: [
-          `Family check: p-monotone after p-contraction with p-height ${contractionData.height} and contraction [${contractionData.contraction.join(", ")}].`,
-        ],
-      }), */
     },
   };
 }
