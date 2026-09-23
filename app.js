@@ -105,14 +105,19 @@ export function classifyConstruction(columns, d, q, characteristicInfo) {
   const bestUpper = evaluateUpperBounds(baseContext);
   const bestLower = evaluateLowerBounds({ ...baseContext, bestUpper });
 
-  if (!bestUpper || !bestLower) {
-    throw new Error("At least one applicable upper and lower bound must be registered.");
+  if (!bestLower) {
+    throw new Error("At least one applicable lower bound must be registered.");
+  }
+
+  const resolvedUpper = bestUpper || (bestLower.value === 0 ? { value: 0, ref: bestLower.ref } : null);
+  if (!resolvedUpper) {
+    throw new Error("At least one applicable upper bound must be registered.");
   }
 
   return {
-    upper: bestUpper.value,
+    upper: resolvedUpper.value,
     lower: bestLower.value,
-    upperRef: bestUpper.ref,
+    upperRef: resolvedUpper.ref,
     lowerRef: bestLower.ref,
     source: "derived",
     construction: bestLower.construction,

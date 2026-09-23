@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict';
 import * as app from '../app.js';
+import { createEvaluationContext } from '../bounds/shared.js';
+import pMonotoneLowerBound from '../lower bounds/NeriStanojkovsk2024/p-monotone.js';
+import strictlyMonotoneLowerBound from '../lower bounds/NeriStanojkovsk2024/strictly-monotone.js';
 
 function test(name, fn) {
   try {
@@ -54,6 +57,18 @@ test('evaluateLowerBounds keeps the first best applicable result on ties', () =>
 
   assert.equal(result.id, 'first');
   assert.equal(result.value, 7);
+});
+
+test('NeriStanojkovsk2024 precedence keeps strictly monotone before p-monotone on ties', () => {
+  const characteristicInfo = app.characteristicInfoFor(2, '');
+  const baseContext = createEvaluationContext([1, 2], 2, 2, characteristicInfo);
+  const result = app.evaluateLowerBounds(
+    { ...baseContext, bestUpper: app.evaluateUpperBounds(baseContext) },
+    [strictlyMonotoneLowerBound, pMonotoneLowerBound]
+  );
+
+  assert.equal(result.construction.family, 'strictly monotone');
+  assert.equal(result.value, 1);
 });
 
 test('stored exact d=1 case is preserved', () => {
