@@ -4,16 +4,14 @@ import {
 } from "./NeriStanojkovsk2024/index.js";
 
 import {
-  fullSpaceLowerBound,
+  trivialBounds,
   trivialBoundReferences,
-  trivialLowerBound,
 } from "./trivial bounds/index.js";
 
 // Expose lower bounds in priority order.
 export const lowerBounds = [
-  fullSpaceLowerBound,
+  ...trivialBounds,
   ...neriStanojkovsk2024Bounds,
-  trivialLowerBound,
 ];
 
 // Collect lower-bound references from each subfolder registry.
