@@ -14,25 +14,6 @@ const REFERENCE_LIBRARY = {
   ...lowerBoundReferences,
 };
 
-/* // Store exact bound values that are already catalogued.
-const STORED_BOUNDS = {
-  "1,2,3,3|1|2": {
-    upper: 9,
-    lower: 9,
-    upperRef: "singleton_like",
-    lowerRef: "full_space_d1",
-  },
-}; */
-
-/* // Build the lookup key used by the stored-bounds table.
-function keyFor(columns, d, q) {
-  return `${columns.join(",")}|${d}|${q}`;
-} */
-
-/* // Retrieve an exact stored bound when one is available.
-function getStoredBounds(columns, d, q) {
-  return STORED_BOUNDS[keyFor(columns, d, q)] || null;
-} */
 
 // Build one UI-facing applicability entry.
 function createApplicabilityRecord(direction, bound, applicable, evaluation, details) {
@@ -125,33 +106,6 @@ export function bestKnownBounds(columns, d, q, characteristicInfo) {
   };
 
   let result;
-  /* if (stored) {
-    applicability.lower.unshift({
-      id: "stored_exact_case",
-      label: "Stored exact case",
-      direction: "special",
-      applicable: true,
-      value: stored.lower,
-      referenceId: stored.lowerRef,
-      details: [
-        `Applicable because this exact input appears in the catalogued bounds table, giving k = ${stored.lower}.`,
-      ],
-    });
-
-    result = {
-      upper: stored.upper,
-      lower: stored.lower,
-      upperRef: stored.upperRef,
-      lowerRef: stored.lowerRef,
-      source: "stored",
-      construction: {
-        attained: true,
-        label: "Stored exact value",
-        family: "catalogued exact case",
-      },
-      applicability,
-    };
-  } else { */ 
     const resolvedUpper =
       upperInspection.best ||
       (lowerInspection.best.value === 0 ? { value: 0, ref: lowerInspection.best.ref } : null);
@@ -169,7 +123,6 @@ export function bestKnownBounds(columns, d, q, characteristicInfo) {
       construction: lowerInspection.best.construction,
       applicability,
     };
-  //}
 
   return {
     ...result,

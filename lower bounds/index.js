@@ -5,7 +5,6 @@ import {
 
 import {
   fullSpaceLowerBound,
-  maximumRankLowerBound,
   trivialBoundReferences,
   trivialLowerBound,
 } from "./trivial bounds/index.js";
@@ -13,7 +12,6 @@ import {
 // Expose lower bounds in priority order.
 export const lowerBounds = [
   fullSpaceLowerBound,
-  maximumRankLowerBound,
   ...neriStanojkovsk2024Bounds,
   trivialLowerBound,
 ];
