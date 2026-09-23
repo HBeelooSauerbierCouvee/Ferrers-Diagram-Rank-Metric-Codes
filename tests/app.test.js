@@ -4,6 +4,7 @@ import { createEvaluationContext } from '../bounds/shared.js';
 import pMonotoneLowerBound from '../lower bounds/NeriStanojkovsk2024/p-monotone.js';
 import strictlyMonotoneLowerBound from '../lower bounds/NeriStanojkovsk2024/strictly-monotone.js';
 
+// Run a named test case and print TAP-style output.
 function test(name, fn) {
   try {
     fn();
@@ -14,12 +15,14 @@ function test(name, fn) {
   }
 }
 
+// Verify diagonal helpers on a basic triangular diagram.
 test('diagonal counts follow the order-n convention', () => {
   assert.deepEqual(app.expandToOrderTuple([1, 2, 3]), [1, 2, 3]);
   assert.deepEqual(app.diagonalCellCounts([1, 2, 3]), [3, 2, 1]);
   assert.equal(app.nuMin([1, 2, 3], 2), 3);
 });
 
+// Verify a strictly monotone input reaches the computed optimum.
 test('strictly monotone example attains the upper bound', () => {
   const characteristicInfo = app.characteristicInfoFor(2, '');
   const bounds = app.bestKnownBounds([1, 2, 3], 2, 2, characteristicInfo);
@@ -31,6 +34,7 @@ test('strictly monotone example attains the upper bound', () => {
   assert.equal(bounds.construction.family, 'MDS-constructible');
 });
 
+// Verify upper-bound selection prefers the smallest applicable value.
 test('evaluateUpperBounds chooses the smallest applicable result', () => {
   const result = app.evaluateUpperBounds(
     {},
@@ -45,6 +49,7 @@ test('evaluateUpperBounds chooses the smallest applicable result', () => {
   assert.equal(result.value, 2);
 });
 
+// Verify lower-bound selection keeps the first best tie.
 test('evaluateLowerBounds keeps the first best applicable result on ties', () => {
   const result = app.evaluateLowerBounds(
     {},
@@ -59,6 +64,7 @@ test('evaluateLowerBounds keeps the first best applicable result on ties', () =>
   assert.equal(result.value, 7);
 });
 
+// Verify family ordering breaks lower-bound ties deterministically.
 test('NeriStanojkovsk2024 precedence keeps strictly monotone before p-monotone on ties', () => {
   const characteristicInfo = app.characteristicInfoFor(2, '');
   const baseContext = createEvaluationContext([1, 2], 2, 2, characteristicInfo);
@@ -71,6 +77,7 @@ test('NeriStanojkovsk2024 precedence keeps strictly monotone before p-monotone o
   assert.equal(result.value, 1);
 });
 
+// Verify stored exact cases are returned unchanged.
 test('stored exact d=1 case is preserved', () => {
   const characteristicInfo = app.characteristicInfoFor(2, '');
   const bounds = app.bestKnownBounds([1, 2, 3, 3], 1, 2, characteristicInfo);
@@ -83,6 +90,7 @@ test('stored exact d=1 case is preserved', () => {
   assert.equal(bounds.construction.family, 'catalogued exact case');
 });
 
+// Verify unsupported cases fall back to the conservative lower bound.
 test('unsupported cases keep the conservative lower bound', () => {
   const characteristicInfo = app.characteristicInfoFor(4, '');
   const bounds = app.bestKnownBounds([2, 2], 2, 4, characteristicInfo);
@@ -93,6 +101,7 @@ test('unsupported cases keep the conservative lower bound', () => {
   assert.equal(bounds.construction.attained, false);
 });
 
+// Verify prime-power and characteristic validation edge cases.
 test('prime-power and characteristic validation behave conservatively', () => {
   assert.equal(app.isPrimePower(4), true);
   assert.equal(app.isPrimePower(6), false);
@@ -111,6 +120,7 @@ test('prime-power and characteristic validation behave conservatively', () => {
   );
 });
 
+// Verify p-height contraction matches the expected block collapse.
 test('p-height contraction helper follows the block-collapse rule', () => {
   const contraction = app.pHeightAndContraction([0, 0, 2, 2], 2);
   assert.deepEqual(contraction, {
@@ -122,4 +132,5 @@ test('p-height contraction helper follows the block-collapse rule', () => {
   assert.equal(app.isMonotone(contraction.contraction), true);
 });
 
+// Print a final success line when every test passes.
 console.log('All tests passed.');

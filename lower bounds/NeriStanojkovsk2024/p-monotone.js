@@ -5,6 +5,7 @@ import {
   pHeightAndContraction,
 } from "../../bounds/shared.js";
 
+// Derive the contraction data needed for p-monotone checks.
 export function getPMonotoneData(context) {
   const characteristic = context.characteristicInfo.characteristic;
   if (!context.triangular || !characteristic) {
@@ -13,6 +14,7 @@ export function getPMonotoneData(context) {
   return pHeightAndContraction(context.orderTuple, characteristic);
 }
 
+// Detect whether the input satisfies the p-monotone family conditions.
 export function isPMonotoneFamily(context) {
   const characteristic = context.characteristicInfo.characteristic;
   const contractionData = getPMonotoneData(context);
@@ -25,6 +27,7 @@ export function isPMonotoneFamily(context) {
   );
 }
 
+// Build the attained lower bound for p-monotone diagrams.
 export function evaluatePMonotoneLowerBound(context) {
   const contractionData = getPMonotoneData(context);
 
@@ -47,10 +50,12 @@ export function evaluatePMonotoneLowerBound(context) {
   };
 }
 
+// Register the p-monotone lower-bound rule.
 const pMonotoneLowerBound = {
   id: "neri_2024_p_monotone",
   appliesTo: isPMonotoneFamily,
   evaluate: evaluatePMonotoneLowerBound,
 };
 
+// Export the default lower-bound registration.
 export default pMonotoneLowerBound;

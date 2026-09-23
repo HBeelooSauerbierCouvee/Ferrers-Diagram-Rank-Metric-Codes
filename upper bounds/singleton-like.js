@@ -1,5 +1,6 @@
 import { etzionSilbersteinUpper } from "../bounds/shared.js";
 
+// Evaluate the universal Singleton-like upper bound.
 export function evaluateSingletonLikeUpper(context) {
   return {
     id: "singleton_like_upper",
@@ -8,6 +9,7 @@ export function evaluateSingletonLikeUpper(context) {
   };
 }
 
+// Register the Singleton-like upper-bound rule.
 const singletonLikeUpperBound = {
   id: "singleton_like_upper",
   appliesTo() {
@@ -16,4 +18,5 @@ const singletonLikeUpperBound = {
   evaluate: evaluateSingletonLikeUpper,
 };
 
+// Export the default upper-bound registration.
 export default singletonLikeUpperBound;

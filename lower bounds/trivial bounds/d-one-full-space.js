@@ -1,9 +1,11 @@
 import { buildConstructionDetails } from "../../bounds/shared.js";
 
+// Detect the exact full-space case with minimum distance one.
 export function isFullSpaceCase(context) {
   return context.d === 1;
 }
 
+// Build the exact lower bound for the full-space case.
 export function evaluateFullSpaceLowerBound(context) {
   return {
     id: "full_space_d1",
@@ -21,10 +23,12 @@ export function evaluateFullSpaceLowerBound(context) {
   };
 }
 
+// Register the full-space lower-bound rule.
 const fullSpaceLowerBound = {
   id: "full_space_d1",
   appliesTo: isFullSpaceCase,
   evaluate: evaluateFullSpaceLowerBound,
 };
 
+// Export the default lower-bound registration.
 export default fullSpaceLowerBound;
