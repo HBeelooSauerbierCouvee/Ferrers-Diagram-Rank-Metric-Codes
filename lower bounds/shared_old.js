@@ -8,7 +8,7 @@ import {
 
 export { isMonotone, isPowerOfPrime, isStrictlyMonotone, pHeightAndContraction };
 
-// Build the explanation lines shown for an attained lower-bound construction.
+/* // Build the explanation lines shown for an attained lower-bound construction.
 export function buildConstructionDetails(context, { familyMessages = [], attained = false } = {}) {
   const details = [];
 
@@ -33,4 +33,4 @@ export function buildConstructionDetails(context, { familyMessages = [], attaine
   }
 
   return details;
-}
+} */

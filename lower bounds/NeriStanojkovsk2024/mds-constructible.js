@@ -1,4 +1,4 @@
-import { buildConstructionDetails } from "../shared.js";
+// import { buildConstructionDetails } from "../shared.js";
 
 // Detect when the diagonal construction meets the best upper bound.
 export function isMdsConstructibleFamily(context) {
@@ -20,12 +20,12 @@ export function evaluateMdsConstructibleLowerBound(context) {
       attained: true,
       label: "MDS-constructible diagonal construction",
       family: "MDS-constructible",
-      details: buildConstructionDetails(context, {
+      /* details: buildConstructionDetails(context, {
         attained: true,
         familyMessages: [
           "Family check: MDS-constructible because ν_min(D,d) equals the best registered upper bound.",
         ],
-      }),
+      }), */
     },
   };
 }

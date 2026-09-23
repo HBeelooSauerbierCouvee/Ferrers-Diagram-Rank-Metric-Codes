@@ -1,9 +1,9 @@
 import {
-  buildConstructionDetails,
+ // buildConstructionDetails,
   isMonotone,
   isPowerOfPrime,
   pHeightAndContraction,
-} from "../shared.js";
+} from "./shared.js";
 
 // Derive the contraction data needed for p-monotone checks.
 export function getPMonotoneData(context) {
@@ -40,12 +40,12 @@ export function evaluatePMonotoneLowerBound(context) {
       label: "Explicit diagonal construction",
       family: "p-monotone",
       pMonotoneData: contractionData,
-      details: buildConstructionDetails(context, {
+      /* details: buildConstructionDetails(context, {
         attained: true,
         familyMessages: [
           `Family check: p-monotone after p-contraction with p-height ${contractionData.height} and contraction [${contractionData.contraction.join(", ")}].`,
         ],
-      }),
+      }), */
     },
   };
 }

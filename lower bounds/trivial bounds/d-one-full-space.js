@@ -1,4 +1,4 @@
-import { buildConstructionDetails } from "../shared.js";
+//import { buildConstructionDetails } from "../shared.js";
 
 // Detect the exact full-space case with minimum distance one.
 export function isFullSpaceCase(context) {
@@ -15,10 +15,10 @@ export function evaluateFullSpaceLowerBound(context) {
       attained: true,
       label: "Full Ferrers-supported space",
       family: "d = 1 exact case",
-      details: buildConstructionDetails(context, {
+      /* details: buildConstructionDetails(context, {
         attained: true,
         familyMessages: ["Family check: exact d = 1 full-space case."],
-      }),
+      }), */
     },
   };
 }

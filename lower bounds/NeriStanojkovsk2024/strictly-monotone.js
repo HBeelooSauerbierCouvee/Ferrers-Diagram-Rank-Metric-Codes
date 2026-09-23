@@ -1,4 +1,7 @@
-import { buildConstructionDetails, isStrictlyMonotone } from "../shared.js";
+import { 
+  //buildConstructionDetails, 
+  isStrictlyMonotone 
+} from "./shared.js";
 
 // Detect whether the input is strictly monotone.
 export function isStrictlyMonotoneFamily(context) {
@@ -15,12 +18,12 @@ export function evaluateStrictlyMonotoneLowerBound(context) {
       attained: true,
       label: "Explicit diagonal construction",
       family: "strictly monotone",
-      details: buildConstructionDetails(context, {
+      /* details: buildConstructionDetails(context, {
         attained: true,
         familyMessages: [
           "Family check: strictly monotone in the normalized ascending column convention.",
         ],
-      }),
+      }), */
     },
   };
 }
