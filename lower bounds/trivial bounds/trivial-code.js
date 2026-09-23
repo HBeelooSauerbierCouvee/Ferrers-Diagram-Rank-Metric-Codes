@@ -23,10 +23,20 @@ export function evaluateTrivialLowerBound(context) {
   };
 }
 
+// Explain why the trivial lower bound always applies.
+export function describeTrivialApplicability(context, evaluation) {
+  return [
+    `Applicable to every input because the zero code always gives the conservative lower bound k ≥ ${evaluation.value}.`,
+  ];
+}
+
 // Register the trivial lower-bound rule.
 const trivialLowerBound = {
   id: "trivial_code",
+  label: "Trivial zero-code lower bound",
+  referenceId: "trivial_code",
   appliesTo: supportsTrivialCode,
+  describeApplicability: describeTrivialApplicability,
   evaluate: evaluateTrivialLowerBound,
 };
 
