@@ -1,4 +1,4 @@
-import { buildConstructionDetails } from "../../bounds/shared.js";
+import { buildConstructionDetails } from "../shared.js";
 
 // Provide a fallback rule that always permits the zero code.
 export function supportsTrivialCode() {

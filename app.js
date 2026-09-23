@@ -1,4 +1,338 @@
-import {
+import { lowerBoundReferences, lowerBounds } from "./lower bounds/index.js";
+import { upperBoundReferences, upperBounds } from "./upper bounds/index.js";
+
+// Define the supported order cap for user inputs.
+const MAX_ORDER = 12;
+
+// Define the supported field-size cap for user inputs.
+const MAX_FIELD_SIZE = 97;
+
+// Collect bound references from the upper/lower registries.
+const REFERENCE_LIBRARY = {
+  ...upperBoundReferences,
+  ...lowerBoundReferences,
+};
+
+// Store exact bound values that are already catalogued.
+const STORED_BOUNDS = {
+  "1,2,3,3|1|2": {
+    upper: 9,
+    lower: 9,
+    upperRef: "singleton_like",
+    lowerRef: "full_space_d1",
+  },
+};
+
+// Parse and normalize Ferrers column input from the form.
+function parseColumns(raw) {
+  const parts = raw
+    .split(/[\s,]+/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+
+  if (parts.length === 0) {
+    return { error: "Please provide at least one column length." };
+  }
+
+  const cols = parts.map((p) => Number(p));
+  if (cols.some((c) => !Number.isInteger(c) || c <= 0)) {
+    return { error: "Column lengths must be positive integers." };
+  }
+
+  const nondecreasing = cols.every((c, i) => i === 0 || cols[i - 1] <= c);
+  const nonincreasing = cols.every((c, i) => i === 0 || cols[i - 1] >= c);
+  if (!nondecreasing && !nonincreasing) {
+    return { error: "Column lengths must be in ascending or descending order." };
+  }
+
+  return { columns: nondecreasing ? cols : cols.slice().reverse() };
+}
+
+// Check whether an integer is prime.
+function isPrime(n) {
+  if (!Number.isInteger(n) || n < 2) return false;
+  for (let i = 2; i * i <= n; i += 1) {
+    if (n % i === 0) return false;
+  }
+  return true;
+}
+
+// Check whether a field size is a prime power.
+function isPrimePower(q) {
+  if (!Number.isInteger(q) || q < 2) return false;
+  for (let p = 2; p * p <= q; p += 1) {
+    if (q % p !== 0) continue;
+    let n = q;
+    while (n % p === 0) n /= p;
+    return n === 1;
+  }
+  return true;
+}
+
+// Check whether q is a power of the supplied prime p.
+function isPowerOfPrime(q, p) {
+  if (!Number.isInteger(q) || q < 2 || !isPrime(p)) return false;
+  let n = q;
+  while (n % p === 0) {
+    n /= p;
+  }
+  return n === 1;
+}
+
+// Count the total number of cells in a Ferrers diagram.
+function ferrersCellCount(columns) {
+  return columns.reduce((sum, c) => sum + c, 0);
+}
+
+// Compute the order n determined by the diagram dimensions.
+function ferrersOrder(columns) {
+  const rows = Math.max(...columns);
+  const cols = columns.length;
+  return Math.max(rows, cols);
+}
+
+// Left-pad the column sequence to an order-n tuple.
+function expandToOrderTuple(columns) {
+  const n = ferrersOrder(columns);
+  return Array(n - columns.length)
+    .fill(0)
+    .concat(columns);
+}
+
+// Test whether an order-n tuple satisfies the triangular condition.
+function isOrderNTriangular(orderTuple) {
+  return orderTuple.every((height, index) => height <= index + 1);
+}
+
+// Compute the largest rank that any supported matrix can attain.
+function maxPossibleRank(columns) {
+  return Math.min(Math.max(...columns), columns.length);
+}
+
+// Evaluate the Etzion-Silberstein upper bound for the diagram.
+function etzionSilbersteinUpper(columns, d) {
+  const n = columns.length;
+  let best = Number.POSITIVE_INFINITY;
+
+  for (let i = 0; i < d; i += 1) {
+    const keepColumns = n - (d - 1 - i);
+    if (keepColumns <= 0) {
+      best = 0;
+      continue;
+    }
+
+    let count = 0;
+    for (let col = 0; col < keepColumns; col += 1) {
+      count += Math.max(columns[col] - i, 0);
+    }
+    best = Math.min(best, count);
+  }
+
+  return Math.max(0, Number.isFinite(best) ? best : 0);
+}
+
+// Count occupied cells on each diagonal of the order-n diagram.
+function diagonalCellCounts(columns) {
+  const orderTuple = expandToOrderTuple(columns);
+  const n = orderTuple.length;
+  const counts = [];
+
+  for (let diagonal = 1; diagonal <= n; diagonal += 1) {
+    let count = 0;
+    for (let row = 1; row <= n - diagonal + 1; row += 1) {
+      if (orderTuple[row + diagonal - 2] >= row) {
+        count += 1;
+      }
+    }
+    counts.push(count);
+  }
+
+  return counts;
+}
+
+// Compute the diagonal lower-bound quantity ν_min(D,d).
+function nuMin(columns, d) {
+  return diagonalCellCounts(columns).reduce(
+    (sum, count) => sum + Math.max(0, count - d + 1),
+    0
+  );
+}
+
+// Check whether the order-n tuple is monotone in the theorem sense.
+function isMonotone(orderTuple) {
+  const n = orderTuple.length;
+  for (let i = 0; i < n - 1; i += 1) {
+    if (orderTuple[i] > 0 && orderTuple[i] < n && orderTuple[i + 1] <= orderTuple[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// Check whether the order-n tuple is strictly monotone.
+function isStrictlyMonotone(orderTuple) {
+  for (let i = 0; i < orderTuple.length - 1; i += 1) {
+    if (orderTuple[i] > 0 && orderTuple[i + 1] <= orderTuple[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// Check whether the tuple stays constant on fixed-size blocks.
+function isConstantOnBlocks(orderTuple, blockSize) {
+  for (let start = 0; start < orderTuple.length; start += blockSize) {
+    const value = orderTuple[start];
+    for (let offset = 1; offset < blockSize; offset += 1) {
+      if (orderTuple[start + offset] !== value) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+// Compute the p-height and contracted tuple for p-monotone tests.
+function pHeightAndContraction(orderTuple, p) {
+  let height = 0;
+  let blockSize = 1;
+
+  while (true) {
+    const nextBlockSize = blockSize * p;
+    const divisibleByBlockSize = orderTuple.every((value) => value % nextBlockSize === 0);
+    if (
+      orderTuple.length % nextBlockSize !== 0 ||
+      !divisibleByBlockSize ||
+      !isConstantOnBlocks(orderTuple, nextBlockSize)
+    ) {
+      break;
+    }
+    height += 1;
+    blockSize = nextBlockSize;
+  }
+
+  const contraction = [];
+  for (let i = 0; i < orderTuple.length; i += blockSize) {
+    contraction.push(orderTuple[i] / blockSize);
+  }
+
+  return {
+    p,
+    height,
+    blockSize,
+    contraction,
+  };
+}
+
+// Parse a required positive integer.
+function parsePositiveInt(value) {
+  const n = Number(value);
+  return Number.isInteger(n) && n > 0 ? n : null;
+}
+
+// Parse an optional positive integer field.
+function parseOptionalPositiveInt(value) {
+  if (value === "" || value === null || value === undefined) {
+    return null;
+  }
+  return parsePositiveInt(value);
+}
+
+// Resolve and validate the characteristic associated with q.
+function characteristicInfoFor(q, rawCharacteristic) {
+  const characteristic = parseOptionalPositiveInt(rawCharacteristic);
+
+  if (rawCharacteristic !== "" && characteristic === null) {
+    return { error: "Field characteristic p must be a positive integer when provided." };
+  }
+
+  if (characteristic !== null) {
+    if (!isPrime(characteristic)) {
+      return { error: "Field characteristic p must be prime." };
+    }
+    if (!isPowerOfPrime(q, characteristic)) {
+      return { error: `Field size q = ${q} is not a power of the supplied characteristic p = ${characteristic}.` };
+    }
+    return { characteristic, source: "explicit" };
+  }
+
+  if (isPrime(q)) {
+    return { characteristic: q, source: "derived_from_prime_q" };
+  }
+
+  return { characteristic: null, source: "unknown" };
+}
+
+// Build the lookup key used by the stored-bounds table.
+function keyFor(columns, d, q) {
+  return `${columns.join(",")}|${d}|${q}`;
+}
+
+// Retrieve an exact stored bound when one is available.
+function getStoredBounds(columns, d, q) {
+  const key = keyFor(columns, d, q);
+  return STORED_BOUNDS[key] || null;
+}
+
+// Describe how the characteristic value was determined.
+function describeCharacteristic(characteristicInfo) {
+  if (!characteristicInfo.characteristic) {
+    return "Characteristic not supplied; p-monotone detection is limited to prime q.";
+  }
+  if (characteristicInfo.source === "derived_from_prime_q") {
+    return `Characteristic p = ${characteristicInfo.characteristic} inferred because q is prime.`;
+  }
+  return `Characteristic p = ${characteristicInfo.characteristic} supplied explicitly.`;
+}
+
+// Assemble the shared context object used by bound evaluators.
+function createEvaluationContext(columns, d, q, characteristicInfo) {
+  const orderTuple = expandToOrderTuple(columns);
+  const triangular = isOrderNTriangular(orderTuple);
+
+  return {
+    columns: columns.slice(),
+    d,
+    q,
+    characteristicInfo,
+    cells: ferrersCellCount(columns),
+    rMax: maxPossibleRank(columns),
+    orderTuple,
+    triangular,
+    diagonalCounts: triangular ? diagonalCellCounts(columns) : [],
+    diagonalLower: triangular ? nuMin(columns, d) : null,
+  };
+}
+
+// Build the explanation lines shown for a lower-bound construction.
+function buildConstructionDetails(context, { familyMessages = [], attained = false } = {}) {
+  const details = [];
+
+  details.push(`Order-n tuple: [${context.orderTuple.join(", ")}]`);
+
+  if (!context.triangular) {
+    details.push(
+      "This input is not in the order-n triangular convention c_i ≤ i, so the diagonal family test is not certified here."
+    );
+    return details;
+  }
+
+  details.push(`Diagonal sizes |D ∩ Δ_i^n|: [${context.diagonalCounts.join(", ")}]`);
+  details.push(`ν_min(D,d) = ${context.diagonalLower}`);
+  details.push(describeCharacteristic(context.characteristicInfo));
+  details.push(...familyMessages);
+
+  if (!attained) {
+    details.push(
+      "The site computes ν_min for comparison, but does not claim a theorem-backed explicit construction for this input."
+    );
+  }
+
+  return details;
+}
+
+// Export shared helpers for tests and bound modules.
+export {
   MAX_FIELD_SIZE,
   MAX_ORDER,
   REFERENCE_LIBRARY,
@@ -12,36 +346,6 @@ import {
   ferrersCellCount,
   ferrersOrder,
   getStoredBounds,
-  isConstantOnBlocks,
-  isMonotone,
-  isOrderNTriangular,
-  isPowerOfPrime,
-  isPrime,
-  isPrimePower,
-  isStrictlyMonotone,
-  keyFor,
-  maxPossibleRank,
-  nuMin,
-  pHeightAndContraction,
-  parseColumns,
-  parseOptionalPositiveInt,
-  parsePositiveInt,
-} from "./bounds/shared.js";
-import { lowerBounds } from "./lower bounds/index.js";
-import { upperBounds } from "./upper bounds/index.js";
-
-// Re-export shared helpers for tests and other modules.
-export {
-  MAX_FIELD_SIZE,
-  MAX_ORDER,
-  REFERENCE_LIBRARY,
-  STORED_BOUNDS,
-  characteristicInfoFor,
-  diagonalCellCounts,
-  etzionSilbersteinUpper,
-  expandToOrderTuple,
-  ferrersCellCount,
-  ferrersOrder,
   isConstantOnBlocks,
   isMonotone,
   isOrderNTriangular,

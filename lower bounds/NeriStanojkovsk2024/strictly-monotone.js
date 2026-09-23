@@ -1,4 +1,4 @@
-import { buildConstructionDetails, isStrictlyMonotone } from "../../bounds/shared.js";
+import { buildConstructionDetails, isStrictlyMonotone } from "../shared.js";
 
 // Detect whether the input is strictly monotone.
 export function isStrictlyMonotoneFamily(context) {
