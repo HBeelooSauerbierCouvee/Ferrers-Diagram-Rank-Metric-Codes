@@ -39,12 +39,22 @@ export function evaluateSingletonLikeUpper(context) {
   };
 }
 
+// Explain why the Singleton-like upper bound does or does not apply.
+export function describeSingletonLikeApplicability(context, evaluation) {
+  return [
+    `Applicable to every Ferrers diagram; the Etzion-Silberstein formula gives k ≤ ${evaluation.value} for this input.`,
+  ];
+}
+
 // Register the Singleton-like upper-bound rule.
 const singletonLikeUpperBound = {
   id: "singleton_like_upper",
+  label: "Singleton-like upper bound",
+  referenceId: "singleton_like",
   appliesTo() {
     return true;
   },
+  describeApplicability: describeSingletonLikeApplicability,
   evaluate: evaluateSingletonLikeUpper,
 };
 

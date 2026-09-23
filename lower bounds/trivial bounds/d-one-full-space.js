@@ -23,10 +23,22 @@ export function evaluateFullSpaceLowerBound(context) {
   };
 }
 
+// Explain whether the d = 1 exact case applies to this input.
+export function describeFullSpaceApplicability(context, evaluation) {
+  if (!evaluation) {
+    return [`Not applicable because d = ${context.d} instead of d = 1.`];
+  }
+
+  return [`Applicable because d = 1, so the full Ferrers-supported space gives k = ${evaluation.value}.`];
+}
+
 // Register the full-space lower-bound rule.
 const fullSpaceLowerBound = {
   id: "full_space_d1",
+  label: "Full-space exact lower bound",
+  referenceId: "full_space_d1",
   appliesTo: isFullSpaceCase,
+  describeApplicability: describeFullSpaceApplicability,
   evaluate: evaluateFullSpaceLowerBound,
 };
 
