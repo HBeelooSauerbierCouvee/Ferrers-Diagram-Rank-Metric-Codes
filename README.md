@@ -63,18 +63,4 @@ The site also preserves the existing exact/trivial cases in `lower bounds/trivia
 - For unsupported cases, the lower bound remains the trivial proven lower bound `0` unless one of the older exact/trivial cases applies.
 - The site uses integer arithmetic only.
 
-## Lightweight tests
 
-No test framework is required. A browser-independent Node test file is included.
-
-Run:
-
-```bash
-node tests/app.test.js
-```
-
-The test file checks:
-- diagonal cell counts and `ν_min(D,d)` on simple diagrams,
-- equality with the upper bound for a supported exact example,
-- fallback to the conservative lower bound for unsupported inputs,
-- prime-power and field-characteristic validation helpers.
