@@ -11,13 +11,19 @@ Open `/index.html` (or host with GitHub Pages), then provide:
 - field size `q`,
 - optionally the field characteristic `p` when you want `p`-monotone family detection for non-prime `q`.
 
-The page validates limits `N` and `q` (configured in `app.js`), renders the diagram, and reports upper/lower bounds with references.
+The page validates limits `N` and `q`, renders the diagram, and reports upper/lower bounds with references.
 
 ## Implemented bounds
 
+### Folder structure
+
+- `upper bounds/`: registered upper bounds
+- `lower bounds/trivial bounds/`: exact and conservative trivial lower bounds
+- `lower bounds/NeriStanojkovsk2024/`: currently implemented optimal families from Neri--Stanojkovski (2024)
+
 ### Upper bound
 
-The site keeps the existing Etzion-Silberstein / Singleton-type upper bound implementation.
+The Singleton-like Etzion-Silberstein upper bound now lives in `upper bounds/singleton-like.js`.
 
 ### Explicit lower-bound constructions implemented here
 
@@ -35,7 +41,7 @@ with
 
 `Δ_i^n = {(j, j + i - 1) : 1 ≤ j ≤ n - i + 1}`.
 
-The implementation counts these diagonals in the same normalized ascending-column convention used internally by `app.js`; the optional descending display mode only reverses presentation.
+The implementation counts these diagonals in the same normalized ascending-column convention used internally by the shared bounds utilities; the optional descending display mode only reverses presentation.
 
 ## When the site certifies the diagonal construction
 
@@ -46,7 +52,7 @@ It certifies `k = ν_min(D,d)` only when at least one of the following supported
 - **Strictly monotone:** after normalization to ascending columns, every positive column is strictly smaller than the next one.
 - **`p`-monotone:** after expanding to an order-`n` tuple in the paper's convention, the tuple has a valid `p`-height / `p`-contraction and the contraction is monotone. For non-prime `q`, the UI requires an explicit characteristic input `p` before attempting this classification.
 
-The site also preserves the existing exact/trivial cases:
+The site also preserves the existing exact/trivial cases in `lower bounds/trivial bounds/`:
 - `d = 1`: full Ferrers-supported space, so `k = |F|`.
 - `d` larger than the maximum possible rank: only the zero code is possible.
 

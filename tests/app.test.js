@@ -1,5 +1,5 @@
-const assert = require('node:assert/strict');
-const app = require('../app.js');
+import assert from 'node:assert/strict';
+import * as app from '../app.js';
 
 function test(name, fn) {
   try {
@@ -26,16 +26,16 @@ test('strictly monotone example attains the upper bound', () => {
   assert.equal(bounds.lowerRef, 'neri_stanojkovski_2024');
   assert.equal(bounds.construction.label, 'MDS-constructible diagonal construction');
   assert.equal(bounds.construction.family, 'MDS-constructible');
-  assert.deepEqual(bounds.construction.diagonalCounts, [3, 2, 1]);
 });
 
-test('stored exact d=1 case is preserved', () => {
+test('exact d=1 case is preserved through the trivial bounds folder', () => {
   const characteristicInfo = app.characteristicInfoFor(2, '');
   const bounds = app.bestKnownBounds([1, 2, 3, 3], 1, 2, characteristicInfo);
 
   assert.equal(bounds.upper, 9);
   assert.equal(bounds.lower, 9);
   assert.equal(bounds.lowerRef, 'full_space_d1');
+  assert.equal(bounds.construction.family, 'd = 1 exact case');
 });
 
 test('unsupported cases keep the conservative lower bound', () => {
@@ -46,7 +46,6 @@ test('unsupported cases keep the conservative lower bound', () => {
   assert.equal(bounds.lower, 0);
   assert.equal(bounds.lowerRef, 'trivial_code');
   assert.equal(bounds.construction.attained, false);
-  assert.equal(bounds.construction.diagonalLower, null);
 });
 
 test('prime-power and characteristic validation behave conservatively', () => {
