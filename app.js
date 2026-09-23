@@ -3,6 +3,7 @@ import {
   MAX_ORDER,
   REFERENCE_LIBRARY,
   STORED_BOUNDS,
+  buildConstructionDetails,
   characteristicInfoFor,
   createEvaluationContext,
   diagonalCellCounts,
@@ -104,6 +105,10 @@ export function classifyConstruction(columns, d, q, characteristicInfo) {
   const bestUpper = evaluateUpperBounds(baseContext);
   const bestLower = evaluateLowerBounds({ ...baseContext, bestUpper });
 
+  if (!bestUpper || !bestLower) {
+    throw new Error("At least one applicable upper and lower bound must be registered.");
+  }
+
   return {
     upper: bestUpper.value,
     lower: bestLower.value,
@@ -121,6 +126,7 @@ export function derivedBounds(columns, d, q, characteristicInfo) {
 export function bestKnownBounds(columns, d, q, characteristicInfo) {
   const stored = getStoredBounds(columns, d, q);
   if (stored) {
+    const context = createEvaluationContext(columns, d, q, characteristicInfo);
     return {
       upper: stored.upper,
       lower: stored.lower,
@@ -131,7 +137,10 @@ export function bestKnownBounds(columns, d, q, characteristicInfo) {
         attained: true,
         label: "Stored exact value",
         family: "catalogued exact case",
-        details: [],
+        details: buildConstructionDetails(context, {
+          attained: true,
+          familyMessages: ["Family check: catalogued exact case from the stored bounds table."],
+        }),
       },
     };
   }

@@ -29,7 +29,14 @@ export const REFERENCE_LIBRARY = {
   },
 };
 
-export const STORED_BOUNDS = {};
+export const STORED_BOUNDS = {
+  "1,2,3,3|1|2": {
+    upper: 9,
+    lower: 9,
+    upperRef: "singleton_like",
+    lowerRef: "full_space_d1",
+  },
+};
 
 export function parseColumns(raw) {
   const parts = raw

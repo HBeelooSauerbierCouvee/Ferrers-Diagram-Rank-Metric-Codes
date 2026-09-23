@@ -28,14 +28,16 @@ test('strictly monotone example attains the upper bound', () => {
   assert.equal(bounds.construction.family, 'MDS-constructible');
 });
 
-test('exact d=1 case is preserved through the trivial bounds folder', () => {
+test('stored exact d=1 case is preserved', () => {
   const characteristicInfo = app.characteristicInfoFor(2, '');
   const bounds = app.bestKnownBounds([1, 2, 3, 3], 1, 2, characteristicInfo);
 
   assert.equal(bounds.upper, 9);
   assert.equal(bounds.lower, 9);
+  assert.equal(bounds.source, 'stored');
   assert.equal(bounds.lowerRef, 'full_space_d1');
-  assert.equal(bounds.construction.family, 'd = 1 exact case');
+  assert.equal(bounds.construction.label, 'Stored exact value');
+  assert.equal(bounds.construction.family, 'catalogued exact case');
 });
 
 test('unsupported cases keep the conservative lower bound', () => {
