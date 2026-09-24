@@ -9,7 +9,7 @@
       .app-layout {
         display: grid;
         grid-template-columns: 210px minmax(0, 1fr);
-        min-height: 100vh;
+        height: 100vh;
         transition: grid-template-columns 250ms ease;
       }
 
@@ -24,8 +24,12 @@
         align-self: start;
         height: 100vh;
         overflow: hidden;
-        position: relative;
         transition: padding 250ms ease;
+      }
+
+      .app-layout > main {
+        min-height: 0;
+        overflow-y: auto;
       }
 
       .side-menu nav {
@@ -117,7 +121,12 @@
       @media (max-width: 720px) {
         .app-layout {
           display: block;
+          height: auto;
           transition: none;
+        }
+
+        .app-layout > main {
+          overflow-y: visible;
         }
 
         .side-menu {
