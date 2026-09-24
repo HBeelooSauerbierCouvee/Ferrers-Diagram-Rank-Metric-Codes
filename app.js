@@ -246,7 +246,7 @@ function renderAllReferences() {
   if (!list) return;
   list.innerHTML = "";
 
-  const references = nonTrivialImplementedReferences();
+  const references = nonTrivialImplementedReferences().sort((a, b) => a.label.localeCompare(b.label));
   if (references.length === 0) {
     const item = document.createElement("li");
     item.textContent = "No non-trivial bound references are currently implemented.";
@@ -283,14 +283,6 @@ function main() {
   document.getElementById("cite-bibtex").textContent = CITE_BIBTEX;
   renderAllReferences();
   showPage(pageIdFromHash());
-
-  for (const button of document.querySelectorAll("[data-page-target]")) {
-    button.addEventListener("click", (event) => {
-      event.preventDefault();
-      showPage(button.dataset.pageTarget);
-      window.location.hash = button.dataset.pageTarget;
-    });
-  }
 
   window.addEventListener("hashchange", () => {
     showPage(pageIdFromHash());
