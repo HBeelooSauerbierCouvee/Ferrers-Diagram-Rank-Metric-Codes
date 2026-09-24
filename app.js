@@ -223,7 +223,13 @@ function showPage(pageId) {
   }
 
   for (const button of document.querySelectorAll("[data-page-target]")) {
-    button.classList.toggle("active", button.dataset.pageTarget === pageId);
+    const isActive = button.dataset.pageTarget === pageId;
+    button.classList.toggle("active", isActive);
+    if (isActive) {
+      button.setAttribute("aria-current", "page");
+    } else {
+      button.removeAttribute("aria-current");
+    }
   }
 }
 

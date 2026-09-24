@@ -15,19 +15,26 @@ export const REFERENCE_LIBRARY = {
 };
 
 const TRIVIAL_REFERENCE_IDS = new Set(["trivial_code", "full_space_d1"]);
+const TRIVIAL_BOUND_IDS = new Set(["trivial_code", "full_space_d1"]);
+
+// Determine whether a bound should be treated as trivial.
+function isTrivialBound(bound) {
+  return TRIVIAL_BOUND_IDS.has(bound.id) || TRIVIAL_REFERENCE_IDS.has(bound.referenceId);
+}
 
 // List references attached to currently implemented non-trivial bounds.
 export function nonTrivialImplementedReferences() {
   const ids = new Set();
 
   for (const bound of upperBounds) {
-    if (bound.referenceId) {
-      ids.add(bound.referenceId);
+    if (!bound.referenceId || isTrivialBound(bound)) {
+      continue;
     }
+    ids.add(bound.referenceId);
   }
 
   for (const bound of lowerBounds) {
-    if (!bound.referenceId || TRIVIAL_REFERENCE_IDS.has(bound.referenceId)) {
+    if (!bound.referenceId || isTrivialBound(bound)) {
       continue;
     }
     ids.add(bound.referenceId);
