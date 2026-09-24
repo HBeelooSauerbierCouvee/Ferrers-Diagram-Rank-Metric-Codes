@@ -242,6 +242,18 @@ function pageIdFromHash() {
   return PAGE_IDS.includes(pageId) ? pageId : "home";
 }
 
+// Toggle the navigation menu while keeping the control available.
+function syncMenuToggle(collapsed) {
+  const layout = document.querySelector(".app-layout");
+  const toggle = document.getElementById("menu-toggle");
+  if (!layout || !toggle) return;
+
+  layout.classList.toggle("menu-collapsed", collapsed);
+  toggle.setAttribute("aria-expanded", String(!collapsed));
+  toggle.setAttribute("aria-label", collapsed ? "Show navigation menu" : "Hide navigation menu");
+  toggle.querySelector("span").textContent = collapsed ? "→" : "←";
+}
+
 // Render all references for implemented non-trivial bounds.
 function renderAllReferences() {
   const list = document.getElementById("all-references");
@@ -285,10 +297,18 @@ function main() {
   document.getElementById("cite-bibtex").textContent = CITE_BIBTEX;
   renderAllReferences();
   showPage(pageIdFromHash());
+  syncMenuToggle(false);
 
   window.addEventListener("hashchange", () => {
     showPage(pageIdFromHash());
   });
+
+  const menuToggle = document.getElementById("menu-toggle");
+  if (menuToggle) {
+    menuToggle.addEventListener("click", () => {
+      syncMenuToggle(!document.querySelector(".app-layout").classList.contains("menu-collapsed"));
+    });
+  }
 
   const form = document.getElementById("query-form");
   syncOrderModeUi(currentOrderMode());

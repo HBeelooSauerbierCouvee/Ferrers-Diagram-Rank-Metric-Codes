@@ -10,6 +10,7 @@
         display: grid;
         grid-template-columns: 210px minmax(0, 1fr);
         min-height: 100vh;
+        transition: grid-template-columns 250ms ease;
       }
 
       .side-menu {
@@ -21,6 +22,55 @@
         top: 0;
         align-self: start;
         height: 100vh;
+        overflow: hidden;
+        position: relative;
+        transition: padding 250ms ease;
+      }
+
+      .side-menu nav {
+        opacity: 1;
+        transition: opacity 150ms ease;
+      }
+
+      .menu-toggle {
+        position: absolute;
+        top: 50%;
+        right: -1px;
+        z-index: 2;
+        width: 1.75rem;
+        min-height: 2.5rem;
+        padding: 0.25rem;
+        transform: translateY(-50%);
+        border: 1px solid #94a3b8;
+        border-right: 0;
+        border-radius: 6px 0 0 6px;
+        background: #e2e8f0;
+        color: #0f172a;
+        font-size: 1.25rem;
+        line-height: 1;
+      }
+
+      .menu-toggle:hover {
+        background: #cbd5e1;
+      }
+
+      .menu-toggle:focus-visible {
+        outline: 3px solid #1d4ed8;
+        outline-offset: 2px;
+      }
+
+      .app-layout.menu-collapsed {
+        grid-template-columns: 2.75rem minmax(0, 1fr);
+      }
+
+      .menu-collapsed .side-menu {
+        padding-right: 0;
+        padding-left: 0;
+      }
+
+      .menu-collapsed .side-menu nav {
+        opacity: 0;
+        pointer-events: none;
       }
 
       .side-menu ul {
@@ -57,16 +107,35 @@
 
       @media (max-width: 720px) {
         .app-layout {
-          grid-template-columns: 1fr;
+          display: block;
+          transition: none;
         }
 
         .side-menu {
           position: sticky;
           top: 0;
           height: auto;
+          max-height: 20rem;
           border-right: 0;
           border-bottom: 1px solid #cbd5e1;
           z-index: 1;
+          transition: max-height 250ms ease, padding 250ms ease;
+        }
+
+        .menu-toggle {
+          top: auto;
+          right: 1rem;
+          bottom: -1px;
+          transform: none;
+          border-right: 1px solid #94a3b8;
+          border-bottom: 0;
+          border-radius: 6px 6px 0 0;
+        }
+
+        .app-layout.menu-collapsed .side-menu {
+          max-height: 3.5rem;
+          padding-top: 0.5rem;
+          padding-bottom: 0.5rem;
         }
       }
     </style>
@@ -74,14 +143,24 @@
   <body>
     <div class="app-layout">
       <aside class="side-menu">
-        <nav aria-label="Main navigation">
-        <ul>
-          <li><a href="#home" data-page-target="home" class="active">Home</a></li>
-          <li><a href="#references" data-page-target="references">References</a></li>
-          <li><a href="#cite" data-page-target="cite">How to cite</a></li>
-          <li><a href="#contact" data-page-target="contact">Contact</a></li>
-        </ul>
+        <nav id="main-navigation" aria-label="Main navigation">
+          <ul>
+            <li><a href="#home" data-page-target="home" class="active">Home</a></li>
+            <li><a href="#references" data-page-target="references">References</a></li>
+            <li><a href="#cite" data-page-target="cite">How to cite</a></li>
+            <li><a href="#contact" data-page-target="contact">Contact</a></li>
+          </ul>
         </nav>
+        <button
+          id="menu-toggle"
+          class="menu-toggle"
+          type="button"
+          aria-controls="main-navigation"
+          aria-expanded="true"
+          aria-label="Hide navigation menu"
+        >
+          <span aria-hidden="true">←</span>
+        </button>
       </aside>
 
       <main class="container">
