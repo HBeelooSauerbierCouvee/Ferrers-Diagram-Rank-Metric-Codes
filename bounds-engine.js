@@ -1,4 +1,4 @@
-import { characteristicInfoFor, createEvaluationContext, ferrersOrder, isPrimePower, parseColumns, parsePositiveInt } from "./bound-helpers.js";
+import {isPrimePower, characteristicOfPrimePower, ferrersCellCount, ferrersOrder, expandToOrderN} from "./helper-functions.js";
 import { lowerBoundReferences, lowerBounds } from "./lower bounds/index.js";
 import { upperBoundReferences, upperBounds } from "./upper bounds/index.js";
 
@@ -85,9 +85,25 @@ function collectReferences(bounds) {
     .filter(Boolean);
 }
 
+
+// Assemble the shared context object used by bound evaluators.
+export function createEvaluationContext(columns, d, q) {
+  return {
+    columns: columns.slice(),
+    d,
+    q,
+    char: characteristicOfPrimePower(q),
+    cells: ferrersCellCount(columns),
+    order: ferrersOrder(columns),
+    orderTuple: expandToOrderN(columns),
+  };
+}
+
+
+
 // Resolve the best available upper and lower bounds for one input.
-export function bestKnownBounds(columns, d, q, characteristicInfo) {
-  const baseContext = createEvaluationContext(columns, d, q, characteristicInfo);
+export function bestKnownBounds(columns, d, q) {
+  const baseContext = createEvaluationContext(columns, d, q);
   const upperInspection = inspectBounds(baseContext, upperBounds, "upper");
   const lowerInspection = inspectBounds(
     { ...baseContext, bestUpper: upperInspection.best },
@@ -130,8 +146,52 @@ export function bestKnownBounds(columns, d, q, characteristicInfo) {
   };
 }
 
+
+
+// Parse a required positive integer.
+export function parsePositiveInt(value) {
+  const n = Number(value);
+  return Number.isInteger(n) && n > 0 ? n : null;
+}
+
+// Parse an optional positive integer field.
+export function parseOptionalPositiveInt(value) {
+  if (value === "" || value === null || value === undefined) {
+    return null;
+  }
+  return parsePositiveInt(value);
+}
+
+
+// Parse and normalize Ferrers column input from a query.
+function parseColumns(raw) {
+  const parts = raw
+    .split(/[\s,]+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  if (parts.length === 0) {
+    return { error: "Please provide at least one column length." };
+  }
+
+  const columns = parts.map((part) => Number(part));
+  if (columns.some((column) => !Number.isInteger(column) || column <= 0)) {
+    return { error: "Column lengths must be positive integers." };
+  }
+
+  const nondecreasing = columns.every((column, index) => index === 0 || columns[index - 1] <= column);
+  const nonincreasing = columns.every((column, index) => index === 0 || columns[index - 1] >= column);
+  if (!nondecreasing && !nonincreasing) {
+    return { error: "Column lengths must be in ascending or descending order." };
+  }
+
+  return { columns: nondecreasing ? columns : columns.slice().reverse() };
+}
+
+
+
 // Parse, validate, and evaluate one form submission.
-export function evaluateQueryInput({ rawColumns, rawDistance, rawFieldSize, rawCharacteristic }) {
+export function evaluateQueryInput({ rawColumns, rawDistance, rawFieldSize }) {
   const columnsResult = parseColumns(rawColumns);
   if (columnsResult.error) {
     return { error: columnsResult.error };
@@ -162,16 +222,16 @@ export function evaluateQueryInput({ rawColumns, rawDistance, rawFieldSize, rawC
     return { error: "Field size q must be a prime power." };
   }
 
-  const characteristicInfo = characteristicInfoFor(q, rawCharacteristic);
+  /* const characteristicInfo = characteristicInfoFor(q, rawCharacteristic);
   if (characteristicInfo.error) {
     return { error: characteristicInfo.error };
-  }
+  } */
 
   return {
     columns,
     d,
     q,
-    characteristicInfo,
-    bounds: bestKnownBounds(columns, d, q, characteristicInfo),
+    //characteristicInfo,
+    bounds: bestKnownBounds(columns, d, q),
   };
 }

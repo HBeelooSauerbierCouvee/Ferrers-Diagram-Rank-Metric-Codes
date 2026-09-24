@@ -13,8 +13,7 @@ export const trivialBoundReferences = {
   },
 };
 
-// Re-export the trivial lower-bound helpers.
-// export { fullSpaceLowerBound, trivialLowerBound };
+
 
 // Expose the trivial lower-bound registry.
 export const trivialBounds = [fullSpaceLowerBound, trivialLowerBound];

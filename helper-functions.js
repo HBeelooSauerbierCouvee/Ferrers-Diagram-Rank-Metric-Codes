@@ -1,30 +1,7 @@
-// Parse and normalize Ferrers column input from a query.
-export function parseColumns(raw) {
-  const parts = raw
-    .split(/[\s,]+/)
-    .map((part) => part.trim())
-    .filter(Boolean);
 
-  if (parts.length === 0) {
-    return { error: "Please provide at least one column length." };
-  }
-
-  const columns = parts.map((part) => Number(part));
-  if (columns.some((column) => !Number.isInteger(column) || column <= 0)) {
-    return { error: "Column lengths must be positive integers." };
-  }
-
-  const nondecreasing = columns.every((column, index) => index === 0 || columns[index - 1] <= column);
-  const nonincreasing = columns.every((column, index) => index === 0 || columns[index - 1] >= column);
-  if (!nondecreasing && !nonincreasing) {
-    return { error: "Column lengths must be in ascending or descending order." };
-  }
-
-  return { columns: nondecreasing ? columns : columns.slice().reverse() };
-}
 
 // Check whether an integer is prime.
-function isPrime(n) {
+export function isPrime(n) {
   if (!Number.isInteger(n) || n < 2) return false;
   for (let i = 2; i * i <= n; i += 1) {
     if (n % i === 0) return false;
@@ -43,6 +20,19 @@ export function isPrimePower(q) {
   }
   return true;
 }
+
+// Compute characteristic p of a prime power q.
+export function characteristicOfPrimePower(q) {
+  if (!Number.isInteger(q) || q < 2) return null;
+  for (let p = 2; p * p <= q; p += 1) {
+    if (q % p !== 0) continue;
+    let n = q;
+    while (n % p === 0) n /= p;
+    if (n === 1) return p;
+  }
+  return null;
+}
+
 
 // Check whether q is a power of the supplied prime p.
 export function isPowerOfPrime(q, p) {
@@ -67,26 +57,27 @@ export function ferrersOrder(columns) {
 }
 
 // Left-pad the column sequence to an order-n tuple.
-export function expandToOrderTuple(columns) {
+export function expandToOrderN(columns) {
   const n = ferrersOrder(columns);
   return Array(n - columns.length)
     .fill(0)
     .concat(columns);
 }
 
-// Test whether an order-n tuple satisfies the triangular condition.
+/* // Test whether an order-n tuple satisfies the triangular condition.
 export function isOrderNTriangular(orderTuple) {
   return orderTuple.every((height, index) => height <= index + 1);
-}
+} */
 
-// Compute the largest rank that any supported matrix can attain.
+/* // Compute the largest rank that any supported matrix can attain.
 export function maxPossibleRank(columns) {
   return Math.min(Math.max(...columns), columns.length);
 }
+ */
 
-// Count occupied cells on each diagonal of the order-n diagram.
+/* // Count occupied cells on each diagonal of the order-n diagram.
 export function diagonalCellCounts(columns) {
-  const orderTuple = expandToOrderTuple(columns);
+  const orderTuple = expandToOrderN(columns);
   const n = orderTuple.length;
   const counts = [];
 
@@ -101,17 +92,17 @@ export function diagonalCellCounts(columns) {
   }
 
   return counts;
-}
+} */
 
-// Compute the diagonal lower-bound quantity ν_min(D,d).
+/* // Compute the diagonal lower-bound quantity ν_min(D,d).
 export function nuMin(columns, d) {
   return diagonalCellCounts(columns).reduce(
     (sum, count) => sum + Math.max(0, count - d + 1),
     0
   );
-}
+} */
 
-// Check whether the order-n tuple is monotone in the theorem sense.
+/* // Check whether the order-n tuple is monotone in the theorem sense.
 export function isMonotone(orderTuple) {
   const n = orderTuple.length;
   for (let i = 0; i < n - 1; i += 1) {
@@ -120,9 +111,9 @@ export function isMonotone(orderTuple) {
     }
   }
   return true;
-}
+} */
 
-// Check whether the order-n tuple is strictly monotone.
+/* // Check whether the order-n tuple is strictly monotone.
 export function isStrictlyMonotone(orderTuple) {
   for (let i = 0; i < orderTuple.length - 1; i += 1) {
     if (orderTuple[i] > 0 && orderTuple[i + 1] <= orderTuple[i]) {
@@ -130,9 +121,9 @@ export function isStrictlyMonotone(orderTuple) {
     }
   }
   return true;
-}
+} */
 
-// Check whether the tuple stays constant on fixed-size blocks.
+/* // Check whether the tuple stays constant on fixed-size blocks.
 function isConstantOnBlocks(orderTuple, blockSize) {
   for (let start = 0; start < orderTuple.length; start += blockSize) {
     const value = orderTuple[start];
@@ -143,9 +134,9 @@ function isConstantOnBlocks(orderTuple, blockSize) {
     }
   }
   return true;
-}
+} */
 
-// Compute the p-height and contracted tuple for p-monotone tests.
+/* // Compute the p-height and contracted tuple for p-monotone tests.
 export function pHeightAndContraction(orderTuple, p) {
   let height = 0;
   let blockSize = 1;
@@ -175,23 +166,11 @@ export function pHeightAndContraction(orderTuple, p) {
     blockSize,
     contraction,
   };
-}
+} */
 
-// Parse a required positive integer.
-export function parsePositiveInt(value) {
-  const n = Number(value);
-  return Number.isInteger(n) && n > 0 ? n : null;
-}
 
-// Parse an optional positive integer field.
-export function parseOptionalPositiveInt(value) {
-  if (value === "" || value === null || value === undefined) {
-    return null;
-  }
-  return parsePositiveInt(value);
-}
 
-// Resolve and validate the characteristic associated with q.
+/* // Resolve and validate the characteristic associated with q.
 export function characteristicInfoFor(q, rawCharacteristic) {
   const characteristic = parseOptionalPositiveInt(rawCharacteristic);
 
@@ -214,9 +193,9 @@ export function characteristicInfoFor(q, rawCharacteristic) {
   }
 
   return { characteristic: null, source: "unknown" };
-}
+} */
 
-// Describe how the characteristic value was determined.
+/* // Describe how the characteristic value was determined.
 export function describeCharacteristic(characteristicInfo) {
   if (!characteristicInfo.characteristic) {
     return "Characteristic not supplied; p-monotone detection is limited to prime q.";
@@ -225,23 +204,23 @@ export function describeCharacteristic(characteristicInfo) {
     return `Characteristic p = ${characteristicInfo.characteristic} inferred because q is prime.`;
   }
   return `Characteristic p = ${characteristicInfo.characteristic} supplied explicitly.`;
-}
+} */
 
-// Assemble the shared context object used by bound evaluators.
-export function createEvaluationContext(columns, d, q, characteristicInfo) {
-  const orderTuple = expandToOrderTuple(columns);
-  const triangular = isOrderNTriangular(orderTuple);
+/* // Assemble the shared context object used by bound evaluators.
+export function createEvaluationContext(columns, d, q) {
+ // const orderTuple = expandToOrderN(columns);
+  //const triangular = isOrderNTriangular(orderTuple);
 
   return {
     columns: columns.slice(),
     d,
     q,
-    characteristicInfo,
+    char: characteristicOfPrimePower(q),
     cells: ferrersCellCount(columns),
-    rMax: maxPossibleRank(columns),
-    orderTuple,
-    triangular,
-    diagonalCounts: triangular ? diagonalCellCounts(columns) : [],
-    diagonalLower: triangular ? nuMin(columns, d) : null,
+    order: ferrersOrder(columns),
+    orderTuple: expandToOrderN(columns),
+   // triangular,
+   // diagonalCounts: triangular ? diagonalCellCounts(columns) : [],
+   // diagonalLower: triangular ? nuMin(columns, d) : null,
   };
-}
+} */

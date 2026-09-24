@@ -3,6 +3,6 @@ import {
   isPowerOfPrime,
   isStrictlyMonotone,
   pHeightAndContraction,
-} from "../../bound-helpers.js";
+} from "../../helper-functions.js";
 
 export { isMonotone, isPowerOfPrime, isStrictlyMonotone, pHeightAndContraction };

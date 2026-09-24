@@ -8,7 +8,6 @@ const viewState = {
   columns: null,
   d: null,
   q: null,
-  characteristic: null,
 };
 
 // Adapt normalized columns to the currently selected display order.
@@ -79,10 +78,10 @@ function rerenderDiagramSection(options = {}) {
 
   const orderMode = currentOrderMode();
   const columns = columnsForMode(viewState.columns, orderMode);
-  const characteristicText = viewState.characteristic ? `, char(F_q) = ${viewState.characteristic}` : "";
+  //const characteristicText = viewState.characteristic ? `, char(F_q) = ${viewState.characteristic}` : "";
 
   document.getElementById("summary").textContent =
-    `F columns = [${columns.join(", ")}], d = ${viewState.d}, q = ${viewState.q}${characteristicText}.`;
+    `F columns = [${columns.join(", ")}], d = ${viewState.d}, q = ${viewState.q}.`;
   syncOrderModeUi(orderMode);
   renderDiagram(columns);
 
@@ -146,11 +145,11 @@ function renderApplicability(bounds) {
 }
 
 // Populate the result, applicability, and reference panels.
-function renderResult(columns, d, q, characteristicInfo, bounds) {
+function renderResult(columns, d, q, bounds) {
   viewState.columns = columns.slice();
   viewState.d = d;
   viewState.q = q;
-  viewState.characteristic = characteristicInfo.characteristic;
+  //viewState.characteristic = characteristicInfo.characteristic;
 
   const boundsEl = document.getElementById("bounds");
   boundsEl.innerHTML = "";
@@ -209,7 +208,7 @@ function main() {
 
   document.getElementById(
     "name_last_update"
-  ).textContent = `This page is maintained by Hugo Beeloo-Sauerbier Couvee (hugo.sauerbier-couvee@tum.de). Last update: 2026-09-23`;
+  ).textContent = `This page is maintained by Hugo Beeloo-Sauerbier Couvée (hugo.sauerbier-couvee [at] tum.de). Last update: 2026-09-24`;
 
   const form = document.getElementById("query-form");
   syncOrderModeUi(currentOrderMode());
@@ -228,7 +227,7 @@ function main() {
       rawColumns: form.columns.value,
       rawDistance: form.distance.value,
       rawFieldSize: form.field.value,
-      rawCharacteristic: form.characteristic.value,
+     // rawCharacteristic: form.characteristic.value,
     });
 
     if (result.error) {
@@ -236,7 +235,7 @@ function main() {
       return;
     }
 
-    renderResult(result.columns, result.d, result.q, result.characteristicInfo, result.bounds);
+    renderResult(result.columns, result.d, result.q, result.bounds);
   });
 }
 

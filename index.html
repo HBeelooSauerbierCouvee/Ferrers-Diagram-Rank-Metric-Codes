@@ -17,7 +17,7 @@
 
       <form id="query-form" novalidate>
         <label for="columns">Ferrers diagram column lengths (comma-separated integers)</label>
-        <input id="columns" name="columns" placeholder="e.g. 1,2,3,3" required />
+        <input id="columns" name="columns" placeholder="e.g. 1,2,3,4  or  4,3,2,1" required />
 
         <div class="row">
           <div>
@@ -28,13 +28,13 @@
             <label for="field">Field size q</label>
             <input id="field" name="field" type="number" min="2" required />
           </div>
-          <div>
+         <!--  <div>
             <label for="characteristic">Field characteristic p (optional)</label>
             <input id="characteristic" name="characteristic" type="number" min="2" />
             <p class="input-help muted">
               Needed only for p-monotone family checks when q is not prime.
             </p>
-          </div>
+          </div> -->
         </div>
 
         <button type="submit">Show bounds</button>
