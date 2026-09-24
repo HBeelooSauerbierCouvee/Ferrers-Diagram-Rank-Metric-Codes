@@ -233,6 +233,13 @@ function showPage(pageId) {
   }
 }
 
+// Resolve a valid page id from location hash.
+function pageIdFromHash() {
+  const hash = window.location.hash.replace("#", "");
+  const pageId = hash || "home";
+  return ["home", "references", "cite", "contact"].includes(pageId) ? pageId : "home";
+}
+
 // Render all references for implemented non-trivial bounds.
 function renderAllReferences() {
   const list = document.getElementById("all-references");
@@ -275,13 +282,19 @@ function main() {
   document.getElementById("cite-text").textContent = CITE_TEXT;
   document.getElementById("cite-bibtex").textContent = CITE_BIBTEX;
   renderAllReferences();
-  showPage("home");
+  showPage(pageIdFromHash());
 
   for (const button of document.querySelectorAll("[data-page-target]")) {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
       showPage(button.dataset.pageTarget);
+      window.location.hash = button.dataset.pageTarget;
     });
   }
+
+  window.addEventListener("hashchange", () => {
+    showPage(pageIdFromHash());
+  });
 
   const form = document.getElementById("query-form");
   syncOrderModeUi(currentOrderMode());

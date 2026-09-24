@@ -28,15 +28,19 @@
         padding: 0;
       }
 
-      .side-menu button {
+      .side-menu a {
+        display: block;
         width: 100%;
         margin-bottom: 0.5rem;
+        padding: 0.5rem;
         text-align: left;
         background: #e2e8f0;
         color: #0f172a;
+        border-radius: 6px;
+        text-decoration: none;
       }
 
-      .side-menu button.active {
+      .side-menu a.active {
         background: #2563eb;
         color: #ffffff;
       }
@@ -61,13 +65,15 @@
   </head>
   <body>
     <div class="app-layout">
-      <aside class="side-menu" aria-label="Main navigation">
+      <aside class="side-menu">
+        <nav aria-label="Main navigation">
         <ul>
-          <li><button type="button" data-page-target="home" class="active">Home</button></li>
-          <li><button type="button" data-page-target="references">References</button></li>
-          <li><button type="button" data-page-target="cite">How to cite</button></li>
-          <li><button type="button" data-page-target="contact">Contact</button></li>
+          <li><a href="#home" data-page-target="home" class="active">Home</a></li>
+          <li><a href="#references" data-page-target="references">References</a></li>
+          <li><a href="#cite" data-page-target="cite">How to cite</a></li>
+          <li><a href="#contact" data-page-target="contact">Contact</a></li>
         </ul>
+        </nav>
       </aside>
 
       <main class="container">
