@@ -219,7 +219,7 @@ function setError(message) {
 // Display one of the static pages and sync menu button styles.
 function showPage(pageId) {
   for (const section of document.querySelectorAll(".page-section")) {
-    section.hidden = section.id !== `page-${pageId}`;
+    section.hidden = section.id !== pageId;
   }
 
   for (const button of document.querySelectorAll("[data-page-target]")) {
