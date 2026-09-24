@@ -59,6 +59,14 @@
         outline-offset: 2px;
       }
 
+      .menu-arrow::before {
+        content: "←";
+      }
+
+      .menu-collapsed .menu-arrow::before {
+        content: "→";
+      }
+
       .app-layout.menu-collapsed {
         grid-template-columns: 2.75rem minmax(0, 1fr);
       }
@@ -137,6 +145,14 @@
           padding-top: 0.5rem;
           padding-bottom: 0.5rem;
         }
+
+        .menu-arrow::before {
+          content: "↑";
+        }
+
+        .menu-collapsed .menu-arrow::before {
+          content: "↓";
+        }
       }
     </style>
   </head>
@@ -159,7 +175,7 @@
           aria-expanded="true"
           aria-label="Hide navigation menu"
         >
-          <span aria-hidden="true">←</span>
+          <span class="menu-arrow" aria-hidden="true"></span>
         </button>
       </aside>
 

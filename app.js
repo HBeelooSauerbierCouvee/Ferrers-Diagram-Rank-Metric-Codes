@@ -251,7 +251,6 @@ function syncMenuToggle(collapsed) {
   layout.classList.toggle("menu-collapsed", collapsed);
   toggle.setAttribute("aria-expanded", String(!collapsed));
   toggle.setAttribute("aria-label", collapsed ? "Show navigation menu" : "Hide navigation menu");
-  toggle.querySelector("span").textContent = collapsed ? "→" : "←";
 }
 
 // Render all references for implemented non-trivial bounds.
