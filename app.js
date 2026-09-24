@@ -26,6 +26,8 @@ const CITE_BIBTEX = `@misc{beeloo_sauerbier_couvee_2026_ferrers_tool,
   url          = {https://github.com/HBeelooSauerbierCouvee/FerrersDiagramCodeTables}
 }`;
 
+const PAGE_IDS = ["home", "references", "cite", "contact"];
+
 // Adapt normalized columns to the currently selected display order.
 function columnsForMode(columns, orderMode) {
   return orderMode === "descending" ? columns.slice().reverse() : columns;
@@ -237,7 +239,7 @@ function showPage(pageId) {
 function pageIdFromHash() {
   const hash = window.location.hash.replace("#", "");
   const pageId = hash || "home";
-  return ["home", "references", "cite", "contact"].includes(pageId) ? pageId : "home";
+  return PAGE_IDS.includes(pageId) ? pageId : "home";
 }
 
 // Render all references for implemented non-trivial bounds.
