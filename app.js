@@ -1,4 +1,9 @@
-import { MAX_FIELD_SIZE, MAX_ORDER, evaluateQueryInput } from "./bounds-engine.js";
+import {
+  MAX_FIELD_SIZE,
+  MAX_ORDER,
+  evaluateQueryInput,
+  nonTrivialImplementedReferences,
+} from "./bounds-engine.js";
 
 // Track the pending order-mode announcement timeout.
 let orderModeAnnouncementTimer = null;
@@ -9,6 +14,19 @@ const viewState = {
   d: null,
   q: null,
 };
+
+const CITE_TEXT =
+  "Beeloo-Sauerbier Couvée, H. (2026). Optimal Ferrers Diagram Rank-Metric Codes (web tool). https://github.com/HBeelooSauerbierCouvee/FerrersDiagramCodeTables";
+
+const CITE_BIBTEX = `@misc{beeloo_sauerbier_couvee_2026_ferrers_tool,
+  author       = {Beeloo-Sauerbier Couvée, Hugo},
+  title        = {Optimal Ferrers Diagram Rank-Metric Codes},
+  year         = {2026},
+  howpublished = {Web tool},
+  url          = {https://github.com/HBeelooSauerbierCouvee/FerrersDiagramCodeTables}
+}`;
+
+const PAGE_IDS = ["home", "references", "cite", "contact"];
 
 // Adapt normalized columns to the currently selected display order.
 function columnsForMode(columns, orderMode) {
@@ -200,6 +218,60 @@ function setError(message) {
   }
 }
 
+// Display one of the static pages and sync menu button styles.
+function showPage(pageId) {
+  for (const section of document.querySelectorAll(".page-section")) {
+    section.hidden = section.id !== pageId;
+  }
+
+  for (const button of document.querySelectorAll("[data-page-target]")) {
+    const isActive = button.dataset.pageTarget === pageId;
+    button.classList.toggle("active", isActive);
+    if (isActive) {
+      button.setAttribute("aria-current", "page");
+    } else {
+      button.removeAttribute("aria-current");
+    }
+  }
+}
+
+// Resolve a valid page id from location hash.
+function pageIdFromHash() {
+  const hash = window.location.hash.replace("#", "");
+  const pageId = hash || "home";
+  return PAGE_IDS.includes(pageId) ? pageId : "home";
+}
+
+// Render all references for implemented non-trivial bounds.
+function renderAllReferences() {
+  const list = document.getElementById("all-references");
+  if (!list) return;
+  list.innerHTML = "";
+
+  const references = nonTrivialImplementedReferences().sort((a, b) => a.label.localeCompare(b.label));
+  if (references.length === 0) {
+    const item = document.createElement("li");
+    item.textContent = "No non-trivial bound references are currently implemented.";
+    list.appendChild(item);
+    return;
+  }
+
+  for (const ref of references) {
+    const item = document.createElement("li");
+    if (ref.url) {
+      const link = document.createElement("a");
+      link.href = ref.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = ref.label;
+      item.appendChild(link);
+    } else {
+      item.textContent = ref.label;
+    }
+    list.appendChild(item);
+  }
+}
+
 // Wire the page controls to the bounds calculator.
 function main() {
   document.getElementById(
@@ -209,6 +281,14 @@ function main() {
   document.getElementById(
     "name_last_update"
   ).textContent = `This page is maintained by Hugo Beeloo-Sauerbier Couvée (hugo.sauerbier-couvee [at] tum.de). Last update: 2026-09-24`;
+  document.getElementById("cite-text").textContent = CITE_TEXT;
+  document.getElementById("cite-bibtex").textContent = CITE_BIBTEX;
+  renderAllReferences();
+  showPage(pageIdFromHash());
+
+  window.addEventListener("hashchange", () => {
+    showPage(pageIdFromHash());
+  });
 
   const form = document.getElementById("query-form");
   syncOrderModeUi(currentOrderMode());

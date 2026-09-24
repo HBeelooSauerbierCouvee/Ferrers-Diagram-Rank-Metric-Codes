@@ -5,78 +5,177 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Ferrers Diagram Rank-Metric Bounds</title>
     <link rel="stylesheet" href="./styles.css" />
+    <style>
+      .app-layout {
+        display: grid;
+        grid-template-columns: 210px minmax(0, 1fr);
+        min-height: 100vh;
+      }
+
+      .side-menu {
+        background: #ffffff;
+        border-right: 1px solid #cbd5e1;
+        padding: 1rem 0.75rem;
+        position: sticky;
+        top: 0;
+        align-self: start;
+        height: 100vh;
+      }
+
+      .side-menu ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .side-menu a {
+        display: block;
+        width: 100%;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+        text-align: left;
+        background: #e2e8f0;
+        color: #0f172a;
+        border-radius: 6px;
+        text-decoration: none;
+      }
+
+      .side-menu a.active {
+        background: #2563eb;
+        color: #ffffff;
+      }
+
+      .side-menu a:focus-visible {
+        outline: 3px solid #1d4ed8;
+        outline-offset: 2px;
+      }
+
+      .page-section[hidden] {
+        display: none !important;
+      }
+
+      @media (max-width: 720px) {
+        .app-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .side-menu {
+          position: static;
+          height: auto;
+          border-right: 0;
+          border-bottom: 1px solid #cbd5e1;
+        }
+      }
+    </style>
   </head>
   <body>
-    <main class="container">
-      <h1>Optimal Ferrers Diagram Rank-Metric Codes</h1>
-      <p>
-        Query best-known bounds on the dimension <strong>k</strong> for
-        Ferrers-diagram rank-metric codes with inputs <strong>(F, d, q)</strong>
-        over <strong>F<sub>q</sub></strong>.
-      </p>
+    <div class="app-layout">
+      <aside class="side-menu">
+        <nav aria-label="Main navigation">
+        <ul>
+          <li><a href="#home" data-page-target="home" class="active">Home</a></li>
+          <li><a href="#references" data-page-target="references">References</a></li>
+          <li><a href="#cite" data-page-target="cite">How to cite</a></li>
+          <li><a href="#contact" data-page-target="contact">Contact</a></li>
+        </ul>
+        </nav>
+      </aside>
 
-      <form id="query-form" novalidate>
-        <label for="columns">Ferrers diagram column lengths (comma-separated integers)</label>
-        <input id="columns" name="columns" placeholder="e.g. 1,2,3,4  or  4,3,2,1" required />
+      <main class="container">
+        <section id="home" class="page-section">
+          <h1>Optimal Ferrers Diagram Rank-Metric Codes</h1>
+          <p>
+            Query best-known bounds on the dimension <strong>k</strong> for
+            Ferrers-diagram rank-metric codes with inputs <strong>(F, d, q)</strong>
+            over <strong>F<sub>q</sub></strong>.
+          </p>
 
-        <div class="row">
-          <div>
-            <label for="distance">Minimum distance d</label>
-            <input id="distance" name="distance" type="number" min="1" required />
-          </div>
-          <div>
-            <label for="field">Field size q</label>
-            <input id="field" name="field" type="number" min="2" required />
-          </div>
-         <!--  <div>
-            <label for="characteristic">Field characteristic p (optional)</label>
-            <input id="characteristic" name="characteristic" type="number" min="2" />
-            <p class="input-help muted">
-              Needed only for p-monotone family checks when q is not prime.
-            </p>
-          </div> -->
-        </div>
+          <form id="query-form" novalidate>
+            <label for="columns">Ferrers diagram column lengths (comma-separated integers)</label>
+            <input id="columns" name="columns" placeholder="e.g. 1,2,3,4  or  4,3,2,1" required />
 
-        <button type="submit">Show bounds</button>
-      </form>
-
-      <p id="limits" class="muted"></p>
-      <p id="error" role="alert" class="error"></p>
-
-      <section id="results" class="results" hidden>
-        <h2>Result</h2>
-        <p id="summary"></p>
-
-        <div class="diagram-and-bounds">
-          <div>
-            <h3>Ferrers diagram</h3>
-            <div class="diagram-order-control">
-              <label for="diagram-order-toggle" class="toggle-label">
-                <input id="diagram-order-toggle" type="checkbox" />
-                Show descending order
-              </label>
-              <span id="order-mode-badge" class="order-mode-badge">Ascending</span>
-              <span id="order-mode-status" class="sr-only" aria-live="polite" aria-atomic="true"></span>
+            <div class="row">
+              <div>
+                <label for="distance">Minimum distance d</label>
+                <input id="distance" name="distance" type="number" min="1" required />
+              </div>
+              <div>
+                <label for="field">Field size q</label>
+                <input id="field" name="field" type="number" min="2" required />
+              </div>
+             <!--  <div>
+                <label for="characteristic">Field characteristic p (optional)</label>
+                <input id="characteristic" name="characteristic" type="number" min="2" />
+                <p class="input-help muted">
+                  Needed only for p-monotone family checks when q is not prime.
+                </p>
+              </div> -->
             </div>
-            <div id="diagram" class="diagram" aria-hidden="true"></div>
-            <pre id="diagram-text" class="diagram-text" aria-live="polite"></pre>
-          </div>
 
-          <div>
-            <h3>Bounds on k</h3>
-            <ul id="bounds"></ul>
+            <button type="submit">Show bounds</button>
+          </form>
 
-            <h3>Bound applicability</h3>
-            <div id="construction-details"></div>
+          <p id="limits" class="muted"></p>
+          <p id="error" role="alert" class="error"></p>
 
-            <h3>References</h3>
-            <ul id="references"></ul>
-          </div>
-        </div>
-      </section>
+          <section id="results" class="results" hidden>
+            <h2>Result</h2>
+            <p id="summary"></p>
 
-      <p id="name_last_update" class="muted"></p>
-    </main>
+            <div class="diagram-and-bounds">
+              <div>
+                <h3>Ferrers diagram</h3>
+                <div class="diagram-order-control">
+                  <label for="diagram-order-toggle" class="toggle-label">
+                    <input id="diagram-order-toggle" type="checkbox" />
+                    Show descending order
+                  </label>
+                  <span id="order-mode-badge" class="order-mode-badge">Ascending</span>
+                  <span id="order-mode-status" class="sr-only" aria-live="polite" aria-atomic="true"></span>
+                </div>
+                <div id="diagram" class="diagram" aria-hidden="true"></div>
+                <pre id="diagram-text" class="diagram-text" aria-live="polite"></pre>
+              </div>
+
+              <div>
+                <h3>Bounds on k</h3>
+                <ul id="bounds"></ul>
+
+                <h3>Bound applicability</h3>
+                <div id="construction-details"></div>
+
+                <h3>References</h3>
+                <ul id="references"></ul>
+              </div>
+            </div>
+          </section>
+
+          <p id="name_last_update" class="muted"></p>
+        </section>
+
+        <section id="references" class="page-section" hidden>
+          <h1>References</h1>
+          <p>References for all implemented non-trivial upper and lower bounds:</p>
+          <ul id="all-references"></ul>
+        </section>
+
+        <section id="cite" class="page-section" hidden>
+          <h1>How to cite</h1>
+          <h2>Text</h2>
+          <p id="cite-text"></p>
+          <h2>BibTeX</h2>
+          <pre id="cite-bibtex" class="diagram-text"></pre>
+        </section>
+
+        <section id="contact" class="page-section" hidden>
+          <h1>Contact</h1>
+          <p>
+            For questions or feedback, contact:
+            <a href="mailto:hugo.sauerbier-couvee@tum.de">hugo.sauerbier-couvee@tum.de</a>
+          </p>
+        </section>
+      </main>
+    </div>
 
     <script type="module" src="./app.js"></script>
   </body>

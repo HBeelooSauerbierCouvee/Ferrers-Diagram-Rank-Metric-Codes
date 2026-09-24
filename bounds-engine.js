@@ -9,10 +9,41 @@ export const MAX_ORDER = 12;
 export const MAX_FIELD_SIZE = 97;
 
 // Collect bound references from the upper/lower registries.
-const REFERENCE_LIBRARY = {
+export const REFERENCE_LIBRARY = {
   ...upperBoundReferences,
   ...lowerBoundReferences,
 };
+
+const TRIVIAL_REFERENCE_IDS = new Set(["trivial_code", "full_space_d1"]);
+const TRIVIAL_BOUND_IDS = new Set(["trivial_code", "full_space_d1"]);
+
+// Determine whether a bound should be treated as trivial.
+function isTrivialBound(bound) {
+  return TRIVIAL_BOUND_IDS.has(bound.id) || TRIVIAL_REFERENCE_IDS.has(bound.referenceId);
+}
+
+// List references attached to currently implemented non-trivial bounds.
+export function nonTrivialImplementedReferences() {
+  const ids = new Set();
+
+  for (const bound of upperBounds) {
+    if (!bound.referenceId || isTrivialBound(bound)) {
+      continue;
+    }
+    ids.add(bound.referenceId);
+  }
+
+  for (const bound of lowerBounds) {
+    if (!bound.referenceId || isTrivialBound(bound)) {
+      continue;
+    }
+    ids.add(bound.referenceId);
+  }
+
+  return Array.from(ids)
+    .map((id) => REFERENCE_LIBRARY[id])
+    .filter(Boolean);
+}
 
 
 // Build one UI-facing applicability entry.
