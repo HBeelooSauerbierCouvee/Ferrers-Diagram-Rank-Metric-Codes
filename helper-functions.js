@@ -49,20 +49,40 @@ export function ferrersCellCount(columns) {
   return columns.reduce((sum, column) => sum + column, 0);
 }
 
+// Compute the width of the Ferrers diagram.
+export function diagramWidth(columns) {
+  return columns.length;
+}
+
+// Compute the height of the Ferrers diagram.
+export function diagramHeight(columns) {
+  return Math.max(...columns);
+}
+
 // Compute the order n determined by the diagram dimensions.
-export function ferrersOrder(columns) {
-  const rows = Math.max(...columns);
-  const cols = columns.length;
-  return Math.max(rows, cols);
+export function diagramOrder(columns) {
+  return Math.max(diagramHeight(columns), diagramWidth(columns));
 }
 
 // Left-pad the column sequence to an order-n tuple.
 export function expandToOrderN(columns) {
-  const n = ferrersOrder(columns);
+  const n = diagramOrder(columns);
   return Array(n - columns.length)
     .fill(0)
     .concat(columns);
 }
+
+// Compute the dual Ferrers diagram.
+export function dualDiagram(columns) {
+  const n = columns.at(-1);
+  const out = new Array(n);
+  for (let j = 1; j <= n; j++) {
+    const threshold = n + 1 - j;
+    out[j - 1] = columns.filter((v) => v >= threshold).length;
+  }
+  return out;
+}
+
 
 /* // Test whether an order-n tuple satisfies the triangular condition.
 export function isOrderNTriangular(orderTuple) {

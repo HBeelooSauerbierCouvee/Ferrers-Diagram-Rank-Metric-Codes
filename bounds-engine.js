@@ -1,9 +1,9 @@
-import {isPrimePower, characteristicOfPrimePower, ferrersCellCount, ferrersOrder, expandToOrderN} from "./helper-functions.js";
+import {isPrimePower, characteristicOfPrimePower, ferrersCellCount, diagramWidth, diagramHeight, diagramOrder, expandToOrderN, dualDiagram} from "./helper-functions.js";
 import { lowerBoundReferences, lowerBounds } from "./lower bounds/index.js";
 import { upperBoundReferences, upperBounds } from "./upper bounds/index.js";
 
 // Define the supported order cap for user inputs.
-export const MAX_ORDER = 12;
+export const MAX_ORDER = 15;
 
 // Define the supported field-size cap for user inputs.
 export const MAX_FIELD_SIZE = 97;
@@ -118,56 +118,59 @@ function collectReferences(bounds) {
 
 
 // Assemble the shared context object used by bound evaluators.
-export function createEvaluationContext(columns, d, q) {
+export function createEvaluationContext(columns, d, q, isDual) {
   return {
     columns: columns.slice(),
+    isDual,
     d,
     q,
     char: characteristicOfPrimePower(q),
     cells: ferrersCellCount(columns),
-    order: ferrersOrder(columns),
+    width: diagramWidth(columns),
+    height: diagramHeight(columns),
+    order: diagramOrder(columns),
     orderTuple: expandToOrderN(columns),
   };
 }
 
 
 
-// Resolve the best available upper and lower bounds for one input.
+// Resolve the best available upper and lower bounds for one input, and take best bounds comparing the diagram and its dual diagram
 export function bestKnownBounds(columns, d, q) {
-  const baseContext = createEvaluationContext(columns, d, q);
-  const upperInspection = inspectBounds(baseContext, upperBounds, "upper");
-  const lowerInspection = inspectBounds(
-    { ...baseContext, bestUpper: upperInspection.best },
-    lowerBounds,
-    "lower"
-  );
+  const baseContext = createEvaluationContext(columns, d, q, false);
+  const baseContextDual = createEvaluationContext(dualDiagram(columns), d, q, true);
 
-  if (!lowerInspection.best) {
+  const upperInspection = inspectBounds(baseContext, upperBounds, "upper");
+  const upperInspectionDual = inspectBounds(baseContextDual, upperBounds, "upper");
+
+  if (!upperInspection.best || !upperInspectionDual.best) {
+    throw new Error("At least one applicable upper bound must be registered.");
+  }
+
+  const lowerInspection = inspectBounds(baseContext,lowerBounds,"lower");
+  const lowerInspectionDual = inspectBounds(baseContextDual,lowerBounds,"lower");
+
+  if (!lowerInspection.best || !lowerInspectionDual.best) {
     throw new Error("At least one applicable lower bound must be registered.");
   }
 
- // const stored = getStoredBounds(columns, d, q);
+  const bestUpper = upperInspection.best.value <= upperInspectionDual.best.value ? upperInspection : upperInspectionDual;
+
+  const bestLower = lowerInspection.best.value >= lowerInspectionDual.best.value ? lowerInspection : lowerInspectionDual;
+
   const applicability = {
-    upper: upperInspection.applicability,
-    lower: lowerInspection.applicability.slice(),
+    upper: bestUpper.applicability,
+    lower: bestLower.applicability.slice(),
   };
 
-  let result;
-    const resolvedUpper =
-      upperInspection.best ||
-      (lowerInspection.best.value === 0 ? { value: 0, ref: lowerInspection.best.ref } : null);
-
-    if (!resolvedUpper) {
-      throw new Error("At least one applicable upper bound must be registered.");
-    }
-
-    result = {
-      upper: resolvedUpper.value,
-      lower: lowerInspection.best.value,
-      upperRef: resolvedUpper.ref,
-      lowerRef: lowerInspection.best.ref,
+  
+    const result = {
+      upper: bestUpper.best.value,
+      lower: bestLower.best.value,
+      upperRef: bestUpper.best.ref,
+      lowerRef: bestLower.best.ref,
       source: "derived",
-      construction: lowerInspection.best.construction,
+      construction: bestLower.best.construction,
       applicability,
     };
 
@@ -240,7 +243,7 @@ export function evaluateQueryInput({ rawColumns, rawDistance, rawFieldSize }) {
     return { error: "Field size q must be an integer at least 2." };
   }
 
-  const order = ferrersOrder(columns);
+  const order = diagramOrder(columns);
   if (order > MAX_ORDER) {
     return { error: `Ferrers diagram order ${order} exceeds N = ${MAX_ORDER}.` };
   }

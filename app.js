@@ -5,6 +5,8 @@ import {
   nonTrivialImplementedReferences,
 } from "./bounds-engine.js";
 
+import { dualDiagram } from "./helper-functions.js";
+
 // Track the pending order-mode announcement timeout.
 let orderModeAnnouncementTimer = null;
 
@@ -15,16 +17,23 @@ const viewState = {
   q: null,
 };
 
-const CITE_TEXT =
-  "Beeloo-Sauerbier Couvée, H. (2026). Optimal Ferrers Diagram Rank-Metric Codes (web tool). https://github.com/HBeelooSauerbierCouvee/FerrersDiagramCodeTables";
+const LAST_VERSION = "2026-09-25";
 
-const CITE_BIBTEX = `@misc{beeloo_sauerbier_couvee_2026_ferrers_tool,
+const BOTTOM_TEXT = `This page is maintained by Hugo Beeloo-Sauerbier Couvée (hugo.sauerbier-couvee [at] tum.de). Last update: ${LAST_VERSION}.`;
+
+const CITE_TEXT =
+  `Beeloo-Sauerbier Couvée, H. (2026). FerrersDiagramCodeTables (version: ${LAST_VERSION}). https://hbeeloosauerbiercouvee.github.io/FerrersDiagramCodeTables/`;
+
+const CITE_BIBTEX = `@misc{beeloo_2026_ferrers_diagram_code_tables,
   author       = {Beeloo-Sauerbier Couvée, Hugo},
-  title        = {Optimal Ferrers Diagram Rank-Metric Codes},
+  title        = {FerrersDiagramCodeTables},
   year         = {2026},
-  howpublished = {Web tool},
-  url          = {https://github.com/HBeelooSauerbierCouvee/FerrersDiagramCodeTables}
+  note         = {(Version: ${LAST_VERSION})},
+  url          = {https://hbeeloosauerbiercouvee.github.io/FerrersDiagramCodeTables/}
 }`;
+
+const CONTACT_TEXT = `For questions or feedback, contact: hugo.sauerbier-couvee [at] tum.de`;
+
 
 const PAGE_IDS = ["home", "references", "cite", "contact"];
 
@@ -87,7 +96,7 @@ function renderDiagram(columns) {
     );
   }
 
-  document.getElementById("diagram-text").textContent = textRows.join("\n");
+  // document.getElementById("diagram-text").textContent = textRows.join("\n");
 }
 
 // Refresh the diagram section from the last computed result.
@@ -98,8 +107,11 @@ function rerenderDiagramSection(options = {}) {
   const columns = columnsForMode(viewState.columns, orderMode);
   //const characteristicText = viewState.characteristic ? `, char(F_q) = ${viewState.characteristic}` : "";
 
+  const dualDiagramColumns = orderMode === "ascending" ? dualDiagram(columns) : dualDiagram(columns.slice().reverse()).reverse(); 
+  
+
   document.getElementById("summary").textContent =
-    `F columns = [${columns.join(", ")}], d = ${viewState.d}, q = ${viewState.q}.`;
+    `Diagram columns: [${columns.join(", ")}], dual diagram: [${dualDiagramColumns.join(", ")}],  d = ${viewState.d}, q = ${viewState.q}.`;
   syncOrderModeUi(orderMode);
   renderDiagram(columns);
 
@@ -123,11 +135,8 @@ function describeBoundValue(item) {
 }
 
 // Render one bound-applicability group.
-function renderApplicabilityGroup(title, items) {
+function renderApplicabilityGroup(items) {
   const section = document.createElement("section");
-  const heading = document.createElement("h4");
-  heading.textContent = title;
-  section.appendChild(heading);
 
   const list = document.createElement("ul");
   for (const item of items) {
@@ -155,11 +164,16 @@ function renderApplicabilityGroup(title, items) {
 }
 
 // Populate the applicability panel from the engine output.
-function renderApplicability(bounds) {
-  const container = document.getElementById("construction-details");
+function renderApplicabilityUpper(bounds) {
+  const container = document.getElementById("construction-details-upper");
   container.innerHTML = "";
-  container.appendChild(renderApplicabilityGroup("Upper bounds", bounds.applicability.upper));
-  container.appendChild(renderApplicabilityGroup("Lower bounds", bounds.applicability.lower));
+  container.appendChild(renderApplicabilityGroup(bounds.applicability.upper));
+}
+
+function renderApplicabilityLower(bounds) {
+  const container = document.getElementById("construction-details-lower");
+  container.innerHTML = "";
+  container.appendChild(renderApplicabilityGroup(bounds.applicability.lower));
 }
 
 // Populate the result, applicability, and reference panels.
@@ -173,21 +187,30 @@ function renderResult(columns, d, q, bounds) {
   boundsEl.innerHTML = "";
 
   const upperItem = document.createElement("li");
-  upperItem.textContent = `Best-known upper bound: k ≤ ${bounds.upper}`;
+  upperItem.innerHTML = `Best-known upper bound: <b>${bounds.upper}</b>`;
+
+  const betweenItem = document.createElement("br");
 
   const lowerItem = document.createElement("li");
-  lowerItem.textContent = `Best-known lower bound: k ≥ ${bounds.lower}`;
+  lowerItem.innerHTML = `Best-known lower bound: <b>${bounds.lower}</b>`;
+
+  const bottomItem = document.createElement("br");
+
 
   boundsEl.appendChild(upperItem);
+  boundsEl.appendChild(betweenItem);
   boundsEl.appendChild(lowerItem);
+  boundsEl.appendChild(bottomItem);
 
-  if (bounds.construction.attained) {
+
+  /* if (bounds.construction.attained) {
     const constructionItem = document.createElement("li");
     constructionItem.textContent = `${bounds.construction.label}: k = ${bounds.lower}`;
     boundsEl.appendChild(constructionItem);
-  }
+  } */
 
-  renderApplicability(bounds);
+  renderApplicabilityUpper(bounds);
+  renderApplicabilityLower(bounds); 
 
   const refsEl = document.getElementById("references");
   refsEl.innerHTML = "";
@@ -289,11 +312,11 @@ function main() {
     "limits"
   ).textContent = `Configured limits: order N ≤ ${MAX_ORDER}, field size q ≤ ${MAX_FIELD_SIZE}.`;
 
-  document.getElementById(
-    "name_last_update"
-  ).textContent = `This page is maintained by Hugo Beeloo-Sauerbier Couvée (hugo.sauerbier-couvee [at] tum.de). Last update: 2026-09-24`;
+  document.getElementById("name_last_update").textContent = BOTTOM_TEXT;
   document.getElementById("cite-text").textContent = CITE_TEXT;
   document.getElementById("cite-bibtex").textContent = CITE_BIBTEX;
+  document.getElementById("contact-info").textContent = CONTACT_TEXT;
+
   renderAllReferences();
   showPage(pageIdFromHash());
   syncMenuToggle(false);

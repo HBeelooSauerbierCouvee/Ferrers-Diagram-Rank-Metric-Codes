@@ -191,7 +191,8 @@
 
       <main class="container">
         <section id="home" class="page-section">
-          <h1>Optimal Ferrers Diagram Rank-Metric Codes</h1>
+          <h1>FerrersDiagramCodeTables</h1>
+          <h2>Optimal Ferrers Diagram Rank-Metric Codes</h2>
           <p>
             Query best-known bounds on the dimension <strong>k</strong> for
             Ferrers-diagram rank-metric codes with inputs <strong>(F, d, q)</strong>
@@ -211,13 +212,6 @@
                 <label for="field">Field size q</label>
                 <input id="field" name="field" type="number" min="2" required />
               </div>
-             <!--  <div>
-                <label for="characteristic">Field characteristic p (optional)</label>
-                <input id="characteristic" name="characteristic" type="number" min="2" />
-                <p class="input-help muted">
-                  Needed only for p-monotone family checks when q is not prime.
-                </p>
-              </div> -->
             </div>
 
             <button type="submit">Show bounds</button>
@@ -232,33 +226,34 @@
 
             <div class="diagram-and-bounds">
               <div>
-                <h3>Ferrers diagram</h3>
+                <div id="diagram" class="diagram" aria-hidden="true"></div>
+              <!--   <pre id="diagram-text" class="diagram-text" aria-live="polite"></pre> -->
+                <p> </p>
                 <div class="diagram-order-control">
+                  <span id="order-mode-badge" class="order-mode-badge">Ascending</span>
                   <label for="diagram-order-toggle" class="toggle-label">
                     <input id="diagram-order-toggle" type="checkbox" />
                     Show descending order
                   </label>
-                  <span id="order-mode-badge" class="order-mode-badge">Ascending</span>
                   <span id="order-mode-status" class="sr-only" aria-live="polite" aria-atomic="true"></span>
                 </div>
-                <div id="diagram" class="diagram" aria-hidden="true"></div>
-                <pre id="diagram-text" class="diagram-text" aria-live="polite"></pre>
               </div>
 
               <div>
-                <h3>Bounds on k</h3>
+                <h2>Bounds on k</h2>
                 <ul id="bounds"></ul>
 
-                <h3>Bound applicability</h3>
-                <div id="construction-details"></div>
+                <h2>Upper Bounds</h2>
+                <div id="construction-details-upper"></div>
+
+                <h2>Lower Bound Constructions</h2>
+                <div id="construction-details-lower"></div> 
 
                 <h3>References</h3>
                 <ul id="references"></ul>
               </div>
             </div>
           </section>
-
-          <p id="name_last_update" class="muted"></p>
         </section>
 
         <section id="references" class="page-section" hidden>
@@ -277,11 +272,9 @@
 
         <section id="contact" class="page-section" hidden>
           <h1>Contact</h1>
-          <p>
-            For questions or feedback, contact:
-            <a href="mailto:hugo.sauerbier-couvee@tum.de">hugo.sauerbier-couvee@tum.de</a>
-          </p>
+          <p id="contact-info"></p>
         </section>
+        <p id="name_last_update" class="muted"></p>
       </main>
     </div>
 

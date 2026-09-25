@@ -2,16 +2,15 @@ import {
   isStrictlyMonotone 
 } from "./shared.js";
 
-// Detect whether the input is strictly monotone.
-export function isStrictlyMonotoneFamily(context) {
-  return context.triangular && isStrictlyMonotone(context.orderTuple);
-}
+//export { isStrictlyMonotone };
+
+
 
 // Build the attained lower bound for strictly monotone diagrams.
 export function evaluateStrictlyMonotoneLowerBound(context) {
   return {
     id: "neri_2024_strictly_monotone",
-    value: context.diagonalLower,
+    value: 1,
     ref: "neri_stanojkovski_2024",
     construction: {
       attained: true,
@@ -23,20 +22,14 @@ export function evaluateStrictlyMonotoneLowerBound(context) {
 
 // Explain whether the strictly monotone family applies to this input.
 export function describeStrictlyMonotoneApplicability(context, evaluation) {
-  if (!context.triangular) {
-    return [
-      `Not applicable because the order-n tuple [${context.orderTuple.join(", ")}] is not triangular.`,
-    ];
-  }
-
   if (!evaluation) {
     return [
-      `Not applicable because the order-n tuple [${context.orderTuple.join(", ")}] is not strictly monotone.`,
+      `Not applicable because the ${context.isDual ? "dual" : "original"} diagram [${context.columns.join(", ")}] is not strictly monotone.`,
     ];
   }
 
   return [
-    `Applicable because the order-n tuple [${context.orderTuple.join(", ")}] is strictly monotone.`,
+    `Applicable because the ${context.isDual ? "dual" : "original"} diagram [${context.columns.join(", ")}] is strictly monotone.`,
   ];
 }
 
@@ -45,7 +38,7 @@ const strictlyMonotoneLowerBound = {
   id: "neri_2024_strictly_monotone",
   label: "Strictly monotone lower bound",
   referenceId: "neri_stanojkovski_2024",
-  appliesTo: isStrictlyMonotoneFamily,
+  appliesTo: isStrictlyMonotone,
   describeApplicability: describeStrictlyMonotoneApplicability,
   evaluate: evaluateStrictlyMonotoneLowerBound,
 };

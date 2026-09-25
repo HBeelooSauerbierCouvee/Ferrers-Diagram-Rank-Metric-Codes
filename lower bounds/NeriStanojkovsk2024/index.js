@@ -1,5 +1,5 @@
 //import mdsConstructibleLowerBound from "./mds-constructible.js";
-//import strictlyMonotoneLowerBound from "./strictly-monotone.js";
+import strictlyMonotoneLowerBound from "./strictly-monotone.js";
 //import pMonotoneLowerBound from "./p-monotone.js";
 
 // Collect references cited by Neri-Stanojkovski lower-bound rules.
@@ -15,6 +15,6 @@ export const neriStanojkovsk2024References = {
 // Expose the NeriStanojkovsk2024 lower-bound family registry.
 export const neriStanojkovsk2024Bounds = [
   //mdsConstructibleLowerBound,
-  //strictlyMonotoneLowerBound,
+  strictlyMonotoneLowerBound,
   //pMonotoneLowerBound,
 ];
