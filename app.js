@@ -134,8 +134,57 @@ function describeBoundValue(item) {
   return ` (k = ${item.value})`;
 }
 
+// Build the citation-number map and numbered references for displayed bounds.
+function buildDisplayedReferenceData(bounds) {
+  const displayedReferenceIds = [bounds.upperRef, bounds.lowerRef];
+
+  for (const item of bounds.applicability.upper) {
+    if (item.referenceId) {
+      displayedReferenceIds.push(item.referenceId);
+    }
+  }
+
+  for (const item of bounds.applicability.lower) {
+    if (item.referenceId) {
+      displayedReferenceIds.push(item.referenceId);
+    }
+  }
+
+  const uniqueReferenceIds = [];
+  for (const referenceId of displayedReferenceIds) {
+    if (!referenceId || uniqueReferenceIds.includes(referenceId)) {
+      continue;
+    }
+    uniqueReferenceIds.push(referenceId);
+  }
+
+  const numberByReferenceId = new Map();
+  const references = [];
+  for (const ref of bounds.references) {
+    if (!uniqueReferenceIds.includes(ref.id)) {
+      continue;
+    }
+
+    const number = uniqueReferenceIds.indexOf(ref.id) + 1;
+    numberByReferenceId.set(ref.id, number);
+    references.push({ number, ...ref });
+  }
+
+  references.sort((a, b) => a.number - b.number);
+  return { numberByReferenceId, references };
+}
+
+// Format a citation suffix for one reference id.
+function citationSuffix(referenceId, numberByReferenceId) {
+  if (!referenceId || !numberByReferenceId.has(referenceId)) {
+    return "";
+  }
+  return ` [${numberByReferenceId.get(referenceId)}]`;
+}
+
+
 // Render one bound-applicability group.
-function renderApplicabilityGroup(items) {
+function renderApplicabilityGroup(items, numberByReferenceId) {
   const section = document.createElement("section");
 
   const list = document.createElement("ul");
@@ -143,7 +192,7 @@ function renderApplicabilityGroup(items) {
     const entry = document.createElement("li");
 
     const label = document.createElement("strong");
-    label.textContent = `${item.label}: ${item.applicable ? "applies" : "does not apply"}${describeBoundValue(item)}`;
+    label.textContent = `${item.label}: ${item.applicable ? "applies" : "does not apply"}${describeBoundValue(item)}${citationSuffix(item.referenceId, numberByReferenceId)}`;
     entry.appendChild(label);
 
     if (item.details.length > 0) {
@@ -164,16 +213,16 @@ function renderApplicabilityGroup(items) {
 }
 
 // Populate the applicability panel from the engine output.
-function renderApplicabilityUpper(bounds) {
+function renderApplicabilityUpper(bounds, numberByReferenceId) {
   const container = document.getElementById("construction-details-upper");
   container.innerHTML = "";
-  container.appendChild(renderApplicabilityGroup(bounds.applicability.upper));
+  container.appendChild(renderApplicabilityGroup(bounds.applicability.upper, numberByReferenceId));
 }
 
-function renderApplicabilityLower(bounds) {
+function renderApplicabilityLower(bounds, numberByReferenceId) {
   const container = document.getElementById("construction-details-lower");
   container.innerHTML = "";
-  container.appendChild(renderApplicabilityGroup(bounds.applicability.lower));
+  container.appendChild(renderApplicabilityGroup(bounds.applicability.lower, numberByReferenceId));
 }
 
 // Populate the result, applicability, and reference panels.
@@ -185,14 +234,15 @@ function renderResult(columns, d, q, bounds) {
 
   const boundsEl = document.getElementById("bounds");
   boundsEl.innerHTML = "";
+  const { numberByReferenceId, references } = buildDisplayedReferenceData(bounds);
 
   const upperItem = document.createElement("li");
-  upperItem.innerHTML = `Best-known upper bound: <b>${bounds.upper}</b>`;
+  upperItem.innerHTML = `Best-known upper bound: <b>${bounds.upper}</b>${citationSuffix(bounds.upperRef, numberByReferenceId)}`;
 
   const betweenItem = document.createElement("br");
 
   const lowerItem = document.createElement("li");
-  lowerItem.innerHTML = `Best-known lower bound: <b>${bounds.lower}</b>`;
+  lowerItem.innerHTML = `Best-known lower bound: <b>${bounds.lower}</b>${citationSuffix(bounds.lowerRef, numberByReferenceId)}`;
 
   const bottomItem = document.createElement("br");
 
@@ -209,13 +259,16 @@ function renderResult(columns, d, q, bounds) {
     boundsEl.appendChild(constructionItem);
   } */
 
-  renderApplicabilityUpper(bounds);
-  renderApplicabilityLower(bounds); 
+  renderApplicabilityUpper(bounds, numberByReferenceId);
+  renderApplicabilityLower(bounds, numberByReferenceId); 
 
   const refsEl = document.getElementById("references");
   refsEl.innerHTML = "";
-  for (const ref of bounds.references) {
+  for (const ref of references) {
     const item = document.createElement("li");
+    const prefix = document.createElement("span");
+    prefix.textContent = `[${ref.number}] `;
+    item.appendChild(prefix);
     if (ref.url) {
       const link = document.createElement("a");
       link.href = ref.url;
