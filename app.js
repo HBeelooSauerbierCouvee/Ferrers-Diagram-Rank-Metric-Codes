@@ -183,7 +183,8 @@ function citationSuffix(referenceId, numberByReferenceId) {
 
 
 // Render one bound-applicability group.
-function renderApplicabilityGroup(items, numberByReferenceId) {
+function renderApplicabilityGroup(items, numberByReferenceId, options = {}) {
+  const { showApplicabilityStatus = true } = options;
   const section = document.createElement("section");
 
   const list = document.createElement("ul");
@@ -191,7 +192,10 @@ function renderApplicabilityGroup(items, numberByReferenceId) {
     const entry = document.createElement("li");
 
     const label = document.createElement("strong");
-    label.textContent = `${item.label}: ${item.applicable ? "applies" : "does not apply"}${describeBoundValue(item)}${citationSuffix(item.referenceId, numberByReferenceId)}`;
+    const statusText = showApplicabilityStatus
+      ? `: ${item.applicable ? "applies" : "does not apply"}`
+      : ": attains the best lower bound";
+    label.textContent = `${item.label}${statusText}${describeBoundValue(item)}${citationSuffix(item.referenceId, numberByReferenceId)}`;
     entry.appendChild(label);
 
     if (item.details.length > 0) {
@@ -221,7 +225,11 @@ function renderApplicabilityUpper(bounds, numberByReferenceId) {
 function renderApplicabilityLower(bounds, numberByReferenceId) {
   const container = document.getElementById("construction-details-lower");
   container.innerHTML = "";
-  container.appendChild(renderApplicabilityGroup(bounds.applicability.lower, numberByReferenceId));
+  container.appendChild(
+    renderApplicabilityGroup(bounds.applicability.lower, numberByReferenceId, {
+      showApplicabilityStatus: false,
+    })
+  );
 }
 
 // Populate the result, applicability, and reference panels.
