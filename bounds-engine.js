@@ -1,4 +1,4 @@
-import {isPrimePower, characteristicOfPrimePower, ferrersCellCount, diagramWidth, diagramHeight, diagramOrder, expandToOrderN, dualDiagram} from "./helper-functions.js";
+import {isPrimePower, characteristicOfPrimePower, ferrersCellCount, diagramWidth, diagramHeight, diagramOrder, expandToOrderN, dualDiagram, etzionSilbersteinUpper} from "./helper-functions.js";
 import { lowerBoundReferences, lowerBounds } from "./lower bounds/index.js";
 import { upperBoundReferences, upperBounds } from "./upper bounds/index.js";
 
@@ -129,6 +129,7 @@ export function createEvaluationContext(columns, d, q, isDual) {
     width: diagramWidth(columns),
     height: diagramHeight(columns),
     order: diagramOrder(columns),
+    nuMin: etzionSilbersteinUpper(columns, d),
     orderTuple: expandToOrderN(columns),
   };
 }

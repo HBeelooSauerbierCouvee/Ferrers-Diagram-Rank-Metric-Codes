@@ -29,7 +29,7 @@ export function describeFullSpaceApplicability(context, evaluation) {
 // Register the full-space lower-bound rule.
 const fullSpaceLowerBound = {
   id: "full_space_d1",
-  label: "Full-space exact lower bound",
+  label: "Full-space exact construction",
   referenceId: "full_space_d1",
   appliesTo: isFullSpaceCase,
   describeApplicability: describeFullSpaceApplicability,

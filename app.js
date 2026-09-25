@@ -199,14 +199,19 @@ function renderApplicabilityGroup(items, numberByReferenceId, options = {}) {
     const entry = document.createElement("li");
 
     const label = document.createElement("strong");
-    const statusText = showApplicabilityStatus
-      ? `: ${item.applicable ? "applies" : "does not apply"}`
-      : ": attains the best lower bound";
-    label.textContent = `${item.label}${statusText}${describeBoundValue(item)}${citationSuffix(item.referenceId, numberByReferenceId)}`;
+    label.textContent = `${item.label}${citationSuffix(item.referenceId, numberByReferenceId)}`;
     entry.appendChild(label);
 
+    const applicationText = document.createElement("li");
+    const statusText = showApplicabilityStatus
+      ? `${item.applicable ? "Applies" : "Does not apply"}`
+      : "Attains the best lower bound";
+    applicationText.textContent = `${statusText}${describeBoundValue(item)}.`;
+    
+    const detailList = document.createElement("ul");
+    detailList.appendChild(applicationText);
+
     if (item.details.length > 0) {
-      const detailList = document.createElement("ul");
       for (const detail of item.details) {
         const detailItem = document.createElement("li");
         detailItem.textContent = detail;
@@ -255,17 +260,22 @@ function renderResult(columns, d, q, bounds) {
   const upperValue = document.createElement("b");
   upperValue.textContent = String(bounds.upper);
   upperItem.appendChild(upperValue);
-  upperItem.append(citationSuffix(bounds.upperRef, numberByReferenceId));
+  //upperItem.append(citationSuffix(bounds.upperRef, numberByReferenceId));
 
   const lowerItem = document.createElement("li");
   lowerItem.append("Best-known lower bound: ");
   const lowerValue = document.createElement("b");
   lowerValue.textContent = String(bounds.lower);
   lowerItem.appendChild(lowerValue);
-  lowerItem.append(citationSuffix(bounds.lowerRef, numberByReferenceId));
+  //lowerItem.append(citationSuffix(bounds.lowerRef, numberByReferenceId));
+
+  const betweenSpace = document.createElement("br");
+  const bottomSpace = document.createElement("br");
 
   boundsEl.appendChild(upperItem);
+  boundsEl.appendChild(betweenSpace);
   boundsEl.appendChild(lowerItem);
+  boundsEl.appendChild(bottomSpace);
 
 
   /* if (bounds.construction.attained) {

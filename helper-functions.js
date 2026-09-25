@@ -83,6 +83,28 @@ export function dualDiagram(columns) {
   return out;
 }
 
+// Evaluate the Etzion-Silberstein upper bound for the diagram.
+export function etzionSilbersteinUpper(columns, d) {
+  const n = columns.length;
+  let best = Number.POSITIVE_INFINITY;
+
+  for (let i = 0; i < d; i += 1) {
+    const keepColumns = n - (d - 1 - i);
+    if (keepColumns <= 0) {
+      best = 0;
+      continue;
+    }
+
+    let count = 0;
+    for (let col = 0; col < keepColumns; col += 1) {
+      count += Math.max(columns[col] - i, 0);
+    }
+    best = Math.min(best, count);
+  }
+
+  return Math.max(0, Number.isFinite(best) ? best : 0);
+}
+
 
 /* // Test whether an order-n tuple satisfies the triangular condition.
 export function isOrderNTriangular(orderTuple) {

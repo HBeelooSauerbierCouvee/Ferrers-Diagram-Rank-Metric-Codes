@@ -10,11 +10,11 @@ import {
 export function evaluateStrictlyMonotoneLowerBound(context) {
   return {
     id: "neri_2024_strictly_monotone",
-    value: 1,
+    value: context.nuMin,
     ref: "neri_stanojkovski_2024",
     construction: {
       attained: true,
-      label: "Explicit diagonal construction",
+      label: "Strictly monotone construction",
       family: "strictly monotone",
     },
   };
@@ -36,7 +36,7 @@ export function describeStrictlyMonotoneApplicability(context, evaluation) {
 // Register the strictly monotone lower-bound rule.
 const strictlyMonotoneLowerBound = {
   id: "neri_2024_strictly_monotone",
-  label: "Strictly monotone lower bound",
+  label: "Strictly monotone construction",
   referenceId: "neri_stanojkovski_2024",
   appliesTo: isStrictlyMonotone,
   describeApplicability: describeStrictlyMonotoneApplicability,
