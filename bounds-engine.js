@@ -160,9 +160,7 @@ export function bestKnownBounds(columns, d, q) {
 
   const applicability = {
     upper: bestUpper.applicability,
-    lower: bestLower.applicability.filter(
-      (item) => item.applicable && item.value === bestLower.best.value
-    ),
+    lower: bestLower.applicability.slice(),
   };
 
   

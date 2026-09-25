@@ -134,6 +134,13 @@ function describeBoundValue(item) {
   return ` (k = ${item.value})`;
 }
 
+// Select the lower-bound constructions that are applicable and attain the best value.
+function displayedLowerBounds(bounds) {
+  return bounds.applicability.lower.filter(
+    (item) => item.applicable && item.value === bounds.lower
+  );
+}
+
 // Build the citation-number map and numbered references for displayed bounds.
 function buildDisplayedReferenceData(bounds) {
   const displayedReferenceIds = [bounds.upperRef, bounds.lowerRef];
@@ -144,7 +151,7 @@ function buildDisplayedReferenceData(bounds) {
     }
   }
 
-  for (const item of bounds.applicability.lower) {
+  for (const item of displayedLowerBounds(bounds)) {
     if (item.referenceId) {
       displayedReferenceIds.push(item.referenceId);
     }
@@ -226,7 +233,7 @@ function renderApplicabilityLower(bounds, numberByReferenceId) {
   const container = document.getElementById("construction-details-lower");
   container.innerHTML = "";
   container.appendChild(
-    renderApplicabilityGroup(bounds.applicability.lower, numberByReferenceId, {
+    renderApplicabilityGroup(displayedLowerBounds(bounds), numberByReferenceId, {
       showApplicabilityStatus: false,
     })
   );
