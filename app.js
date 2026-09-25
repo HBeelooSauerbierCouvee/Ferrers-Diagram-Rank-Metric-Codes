@@ -250,8 +250,6 @@ function renderResult(columns, d, q, bounds) {
   upperItem.appendChild(upperValue);
   upperItem.append(citationSuffix(bounds.upperRef, numberByReferenceId));
 
-  const betweenItem = document.createElement("br");
-
   const lowerItem = document.createElement("li");
   lowerItem.append("Best-known lower bound: ");
   const lowerValue = document.createElement("b");
@@ -259,13 +257,8 @@ function renderResult(columns, d, q, bounds) {
   lowerItem.appendChild(lowerValue);
   lowerItem.append(citationSuffix(bounds.lowerRef, numberByReferenceId));
 
-  const bottomItem = document.createElement("br");
-
-
   boundsEl.appendChild(upperItem);
-  boundsEl.appendChild(betweenItem);
   boundsEl.appendChild(lowerItem);
-  boundsEl.appendChild(bottomItem);
 
 
   /* if (bounds.construction.attained) {
