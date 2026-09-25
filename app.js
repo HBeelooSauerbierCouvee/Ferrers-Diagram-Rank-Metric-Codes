@@ -236,12 +236,20 @@ function renderResult(columns, d, q, bounds) {
   const { numberByReferenceId, references } = buildDisplayedReferenceData(bounds);
 
   const upperItem = document.createElement("li");
-  upperItem.innerHTML = `Best-known upper bound: <b>${bounds.upper}</b>${citationSuffix(bounds.upperRef, numberByReferenceId)}`;
+  upperItem.append("Best-known upper bound: ");
+  const upperValue = document.createElement("b");
+  upperValue.textContent = String(bounds.upper);
+  upperItem.appendChild(upperValue);
+  upperItem.append(citationSuffix(bounds.upperRef, numberByReferenceId));
 
   const betweenItem = document.createElement("br");
 
   const lowerItem = document.createElement("li");
-  lowerItem.innerHTML = `Best-known lower bound: <b>${bounds.lower}</b>${citationSuffix(bounds.lowerRef, numberByReferenceId)}`;
+  lowerItem.append("Best-known lower bound: ");
+  const lowerValue = document.createElement("b");
+  lowerValue.textContent = String(bounds.lower);
+  lowerItem.appendChild(lowerValue);
+  lowerItem.append(citationSuffix(bounds.lowerRef, numberByReferenceId));
 
   const bottomItem = document.createElement("br");
 
