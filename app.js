@@ -150,24 +150,23 @@ function buildDisplayedReferenceData(bounds) {
     }
   }
 
-  const uniqueReferenceIds = [];
+  const numberByReferenceId = new Map();
+  let nextNumber = 1;
   for (const referenceId of displayedReferenceIds) {
-    if (!referenceId || uniqueReferenceIds.includes(referenceId)) {
+    if (!referenceId || numberByReferenceId.has(referenceId)) {
       continue;
     }
-    uniqueReferenceIds.push(referenceId);
+    numberByReferenceId.set(referenceId, nextNumber);
+    nextNumber += 1;
   }
 
-  const numberByReferenceId = new Map();
   const references = [];
   for (const ref of bounds.references) {
-    if (!uniqueReferenceIds.includes(ref.id)) {
+    if (!numberByReferenceId.has(ref.id)) {
       continue;
     }
 
-    const number = uniqueReferenceIds.indexOf(ref.id) + 1;
-    numberByReferenceId.set(ref.id, number);
-    references.push({ number, ...ref });
+    references.push({ number: numberByReferenceId.get(ref.id), ...ref });
   }
 
   references.sort((a, b) => a.number - b.number);
